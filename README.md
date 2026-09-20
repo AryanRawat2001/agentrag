@@ -10,11 +10,12 @@ strategies were all built and measured. **The measurement is why the shipped ser
 BM25 alone** — see the headline result below. That is the argument of this repo: the
 evaluation harness was built first, and it decided the design.
 
-[![agentrag — 38-second overview](brag-output/brag.jpg)](brag-output/brag.mp4)
+[![The model's quote, diffed against the document, with a verdict on each](brag-output/brag-preview.gif)](brag-output/brag.mp4)
 
-<sub>▶ **38-second overview** (`brag-output/brag.mp4`). A designed recreation of real
-results — every verdict in it is output from this repo's own verifier. The full technical
-walkthrough is `bin/build-demo`, which renders from the live service.</sub>
+<sub>The verification panes, looping. **[▶ Watch the full 38-second overview](brag-output/brag.mp4)**
+— a designed recreation of real results; every verdict in it is output from this repo's own
+verifier. The full technical walkthrough is `bin/build-demo`, which renders from the live
+service.</sub>
 
 > **Status: Phases 0–8 of 9 shipped**, each behind two independent verification gates — a
 > code review, and a numerical audit that recomputes every published figure from raw data
