@@ -573,3 +573,203 @@ class TestPerBuildEvidence:
         (row,) = self._rows([0.98, 0.99])
         assert row["recall_at_k"] == 0.985
         assert row["recall_at_k"] not in row["recall_by_build"]
+
+
+class _StubDense:
+    """Minimal dense side. The sparse tests are about lexical equivalence, so the dense
+    vectors only need to exist and be uniform -- a real embedding model would make these
+    tests slow and would not make them stronger."""
+
+    name = "stub"
+
+    def __init__(self, chunk_ids):
+        import numpy as np
+
+        self._chunk_ids = list(chunk_ids)
+        self.matrix = np.zeros((len(self._chunk_ids), 8), dtype=np.float32)
+        self.matrix[:, 0] = 1.0
+
+    def _query_vector(self, query):
+        import numpy as np
+
+        v = np.zeros(8, dtype=np.float32)
+        v[0] = 1.0
+        return v
+
+
+# ---------------------------------------------------------------------------------
+# Sparse vectors in Qdrant.
+#
+# The locked decision said "named dense *and* sparse vectors with server-side fusion, so
+# hybrid lives in one store". For most of this project's life the collection *declared*
+# `sparse_vectors_config` and nothing was ever written to it, so the sentence was true of
+# the plan and false of the code. These tests exist so that cannot silently regress.
+#
+# The load-bearing property is not "sparse search returns something". It is that the
+# sparse vectors reproduce **this repo's own BM25**, weight for weight -- otherwise a
+# `qdrant-sparse` row in the ablation would be a differently-tokenised retriever and the
+# difference would be misattributed to the vector store.
+# ---------------------------------------------------------------------------------
+
+
+def _sparse_corpus():
+    return [
+        {
+            "chunk_id": "c1",
+            "text": "The sponsor shall submit an annual report within 60 days.",
+            "section_heading": "Reporting",
+            "identifiers": [],
+        },
+        {
+            "chunk_id": "c2",
+            "text": "Adverse event reporting under 21 CFR 314.80 requires prompt notice.",
+            "section_heading": "Safety",
+            "identifiers": [],
+        },
+        {
+            "chunk_id": "c3",
+            "text": "Randomization will be stratified by stage and MYCN status.",
+            "section_heading": "Design",
+            "identifiers": [],
+        },
+        {
+            "chunk_id": "c4",
+            "text": "The eSubmitter tool streamlines data entry for HPHC reporting.",
+            "section_heading": "Tools",
+            "identifiers": [],
+        },
+    ]
+
+
+class TestSparseExportMatchesBM25:
+    """`sparse_document_vectors` must be the weights bm25s itself scores with."""
+
+    def test_dot_product_reproduces_the_bm25_score(self):
+        from ragpipe.retrieval import BM25Retriever
+
+        bm = BM25Retriever(_sparse_corpus())
+        docs = bm.sparse_document_vectors()
+        per_doc = [dict(zip(i, v, strict=True)) for i, v in docs]
+        qi, qv = bm.sparse_query_vector("annual report")
+        assert qi, "query produced no in-vocabulary terms"
+        manual = {}
+        for pos, cid in enumerate(bm.chunk_ids):
+            score = sum(w * per_doc[pos].get(t, 0.0) for t, w in zip(qi, qv, strict=True))
+            if score > 0:
+                manual[cid] = score
+        for hit in bm.search("annual report", k=4):
+            assert hit.chunk_id in manual
+            assert manual[hit.chunk_id] == pytest.approx(hit.score, abs=1e-5)
+
+    def test_vectors_are_aligned_to_corpus_order(self):
+        from ragpipe.retrieval import BM25Retriever
+
+        bm = BM25Retriever(_sparse_corpus())
+        assert len(bm.sparse_document_vectors()) == len(bm.chunk_ids)
+        assert bm.chunk_ids == ["c1", "c2", "c3", "c4"]
+
+    def test_out_of_vocabulary_query_yields_no_terms(self):
+        """Mirrors `search`: no lexical evidence must be an empty ranking, not a
+        constant-score one that fusion would consume as real ranks."""
+        from ragpipe.retrieval import BM25Retriever
+
+        bm = BM25Retriever(_sparse_corpus())
+        assert bm.sparse_query_vector("zzzqqq nonexistentterm") == ([], [])
+
+    def test_repeated_query_term_counts_twice(self):
+        """bm25s sums a repeated term once per occurrence, so a binary query vector
+        would score it differently from `retrieve()`."""
+        from ragpipe.retrieval import BM25Retriever
+
+        bm = BM25Retriever(_sparse_corpus())
+        _, once = bm.sparse_query_vector("report")
+        _, twice = bm.sparse_query_vector("report report")
+        assert once == [1.0] and twice == [2.0]
+
+
+class TestSparseVectorsInQdrant:
+    def _store(self, sparse=True):
+        from ragpipe.retrieval import BM25Retriever
+        from ragpipe.vectorstore import QdrantStore
+
+        chunks = _sparse_corpus()
+        bm = BM25Retriever(chunks)
+        dense = _StubDense(bm.chunk_ids)
+        store = QdrantStore.from_dense(dense, collection="t_sparse", sparse=bm if sparse else None)
+        return store, dense, bm
+
+    def test_sparse_vectors_are_actually_written(self):
+        store, _, _ = self._store()
+        assert store.has_sparse is True
+
+    def test_a_collection_without_them_says_so(self):
+        """The config is declared either way, so the flag is the only honest signal."""
+        store, _, _ = self._store(sparse=False)
+        assert store.has_sparse is False
+
+    def test_sparse_search_reproduces_bm25_ranking(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store()
+        qr = QdrantRetriever(store, dense, sparse=bm, mode="sparse")
+        for query in ("annual report", "adverse event 21 CFR 314.80", "eSubmitter HPHC"):
+            assert [h.chunk_id for h in qr.search(query, k=4)] == [
+                h.chunk_id for h in bm.search(query, k=4)
+            ], f"ranking diverged for {query!r}"
+
+    def test_sparse_mode_refuses_an_unpopulated_collection(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store(sparse=False)
+        with pytest.raises(ValueError, match="no sparse vectors"):
+            QdrantRetriever(store, dense, sparse=bm, mode="sparse")
+
+    def test_mismatched_corpus_order_is_refused(self):
+        """Same length, different order: every weight would land on the wrong chunk."""
+        from ragpipe.retrieval import BM25Retriever
+        from ragpipe.vectorstore import QdrantStore
+
+        chunks = _sparse_corpus()
+        bm = BM25Retriever(list(reversed(chunks)))
+        dense = _StubDense([c["chunk_id"] for c in chunks])
+        with pytest.raises(ValueError, match="does not match"):
+            QdrantStore.from_dense(dense, collection="t_mismatch", sparse=bm)
+
+    def test_an_all_oov_query_returns_nothing(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store()
+        qr = QdrantRetriever(store, dense, sparse=bm, mode="sparse")
+        assert qr.search("zzzqqq nonexistentterm", k=4) == []
+
+    def test_hybrid_fuses_inside_the_store(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store()
+        hy = QdrantRetriever(store, dense, sparse=bm, mode="hybrid")
+        hits = hy.search("annual report", k=3)
+        assert hits and all(h.chunk_id for h in hits)
+        assert [h.rank for h in hits] == list(range(1, len(hits) + 1))
+
+    def test_hybrid_needs_both_sides(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store()
+        with pytest.raises(ValueError, match="needs the BM25 retriever"):
+            QdrantRetriever(store, dense, mode="hybrid")
+        with pytest.raises(ValueError, match="needs a dense retriever"):
+            QdrantRetriever(store, None, sparse=bm, mode="hybrid")
+
+    def test_unknown_mode_is_refused(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store()
+        with pytest.raises(ValueError, match="dense\\|sparse\\|hybrid"):
+            QdrantRetriever(store, dense, sparse=bm, mode="lexical")
+
+    def test_names_distinguish_the_modes_in_an_ablation_row(self):
+        from ragpipe.vectorstore import QdrantRetriever
+
+        store, dense, bm = self._store()
+        assert "sparse" in QdrantRetriever(store, dense, sparse=bm, mode="sparse").name
+        assert "hybrid" in QdrantRetriever(store, dense, sparse=bm, mode="hybrid").name

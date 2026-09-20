@@ -6,6 +6,84 @@ than one with no mistakes in it.
 
 ---
 
+## Phase 9 — two long-standing gaps closed: the heading-overlap figure and sparse vectors
+
+2026-09-20, after the repo went public.
+
+### The heading-overlap figure was recoverable after all
+
+`retrieval.py` carried "27.1% (3,720 of 13,706)" marked **superseded and not
+re-derivable**, on the grounds that the original definition of "carries the heading" was
+never written down and inventing one would produce a number that *looks* like a correction
+while measuring something else. The note concluded that recomputing it meant re-running the
+ablation.
+
+That was the wrong conclusion. The blocker was a missing **definition**, not a missing
+measurement — and the definition was recoverable from the mechanism the note already
+states: the structural span opens on the heading line, so a chunk "carries its heading"
+when the whitespace-normalised `section_heading` is a **prefix** of the whitespace-
+normalised `text`. Applied to the current corpus: **30.1% (4,038 of 13,423)**, or 31.7% of
+the 12,720 chunks that carry a heading label. The looser reading — heading anywhere in
+`text` — gives 31.5%, so the conclusion does not turn on the choice.
+
+The fix is that the definition is now **recorded in the docstring with a runnable
+snippet**, so the figure cannot become unrecoverable again. The old note's own claim that
+"the overlap is of the same order on the current corpus" turned out to be true (27% → 30%).
+
+Also fixed a defect I introduced doing it: `\s` inside a non-raw docstring is an invalid
+escape sequence. It only warns on *fresh* compile, so it vanished from the second test run
+when the `.pyc` was cached — the same staleness trap as the mutation harness. Module
+docstring is now raw.
+
+### Sparse vectors in Qdrant — the locked decision is finally true of the code
+
+The locked decision said "named dense **and** sparse vectors with server-side fusion, so
+hybrid lives in one store". The collection had declared `sparse_vectors_config` since
+Phase 7 and **nothing had ever been written to it**. The sentence described the plan; the
+repo did a hand-joined second index.
+
+What made this worth doing carefully is that the easy version would have been wrong. A
+sparse index built with its own tokenizer would appear in the ablation as a `qdrant-sparse`
+row whose difference from `bm25` looks like a vector-store effect and is actually a
+*retriever* effect — different tokens, different identifier atoms, different stopwords.
+
+So the vectors are **this repo's own BM25 weights**, read out of `bm25s`' internal index
+rather than recomputed from k1/b, with query vectors carrying term **counts** (bm25s sums a
+repeated term once per occurrence, so a binary vector would diverge). A dot product then
+equals the score `retrieve()` returns.
+
+**Verified, not assumed.** On 3,000 real chunks against a live Qdrant server, sparse search
+returned a top-10 identical to `BM25Retriever` for 5/5 queries, maximum score delta
+**0.00000000**. `mode="hybrid"` fuses with RRF inside the store via `Prefetch` +
+`FusionQuery`.
+
+Two silent-failure modes are refused rather than tolerated, because both return a plausible
+*empty ranking* instead of an error:
+
+* querying a collection whose sparse vectors were never written — the config's presence
+  proves nothing, so `has_sparse` is tracked separately;
+* loading sparse weights whose corpus order differs from the dense side — same length is
+  not same order, and every weight would land on the wrong chunk.
+
+RRF is offered because it is measurable, not because it is better: Phase 3 found naive RRF
+**worse than sparse alone** on this corpus.
+
+14 tests added and break-tested: **6 of 7 mutations caught**. The survivor — removing the
+early out-of-vocabulary return in `sparse_query_vector` — is a **true no-op**, not a gap:
+the loop over an empty token list produces no counts and the later `if not counts` guard
+returns the same `([], [])`. Logged rather than papered over.
+
+Suite: **1130 passed, 2 skipped**, lint clean.
+
+### A published number that was slightly wrong
+
+The suite reports **1,118 tests**, of which 2 skip when the bge-small model or TLS is
+unreachable (the sandbox's `*.pem` deny list). "1,116 tests" — the passing count in the
+sandboxed environment — is what got published in the README, on the website and on the
+resume. Not wrong so much as environment-dependent, and worth correcting to the total.
+
+---
+
 ## The chunk-size sweep, regenerated — the stale corpus was hiding a stronger conclusion
 
 2026-09-20, after the repo went public. `reports/chunk_size_sweep.md` was the one artifact

@@ -4,6 +4,29 @@ The locked decision names Qdrant for named dense *and* sparse vectors with serve
 fusion, so hybrid lives in one store rather than a hand-joined second index. This module
 is where that decision finally gets exercised — and, more to the point, measured.
 
+## Sparse vectors: true of the code as of Phase 9
+
+For most of this project's life the collection *declared* `sparse_vectors_config` and
+nothing was ever written to it, so "hybrid lives in one store" described the plan and not
+the repo. `from_dense(..., sparse=bm25)` now writes named sparse vectors alongside the
+dense ones, and `QdrantRetriever(mode="hybrid")` fuses them **server-side** with RRF.
+
+The load-bearing property is not that sparse search returns something. It is that the
+vectors reproduce *this repo's own* `BM25Retriever`, weight for weight. The values are
+read out of `bm25s`' own index rather than recomputed from k1/b, and the query vector
+carries term **counts**, so a dot product equals the score `retrieve()` would give. On
+3,000 real chunks the top-10 is identical to `BM25Retriever` for every query tried, with
+a maximum score delta of 0.0 — checked, because a differently-tokenised sparse index
+would show up in the ablation as a Qdrant effect when it was really a retriever effect.
+
+Two failure modes are refused rather than tolerated, both of which return plausible
+empty rankings instead of errors: querying a collection whose sparse vectors were never
+written, and loading sparse weights whose corpus order differs from the dense side.
+
+RRF is offered because it is measurable, not because it is better. Phase 3 found naive
+RRF *worse than sparse alone* on this corpus — fusion rewards agreement, so a retriever
+with no signal does not abstain, it votes.
+
 ## Why the eval harness kept using exact search
 
 `dense.py` searches exactly: a full matrix product against every chunk vector. Its
@@ -487,6 +510,14 @@ class QdrantStore:
     collection: str
     chunk_ids: list[str] = field(default_factory=list)
     dim: int = 0
+    #: Whether named sparse vectors were actually written. The collection always declares
+    #: `sparse_vectors_config`, so its presence proves nothing -- for most of this
+    #: project's life the config was declared and never populated, which is why the
+    #: locked decision's "hybrid lives in one store" was not yet true of the code. A
+    #: sparse query against an unpopulated collection returns an empty list rather than
+    #: an error, so this flag is what lets the retriever refuse instead of silently
+    #: reporting that the lexical side found nothing.
+    has_sparse: bool = False
     #: point id -> chunk_id. Qdrant point ids must be int or UUID, and chunk ids are
     #: neither, so the mapping is explicit rather than inferred from a payload lookup.
     _ids: dict[str, str] = field(default_factory=dict, repr=False)
@@ -516,6 +547,7 @@ class QdrantStore:
         m: int = DEFAULT_HNSW_M,
         ef_construct: int = DEFAULT_HNSW_EF_CONSTRUCT,
         batch_size: int = 512,
+        sparse: Any | None = None,
     ) -> QdrantStore:
         """Load a collection from an existing `DenseRetriever`'s vectors.
 
@@ -572,7 +604,28 @@ class QdrantStore:
             ),
         )
 
-        store = cls(client=client, collection=collection, chunk_ids=chunk_ids, dim=dim)
+        # A sparse retriever's corpus order must match the dense one, or every weight
+        # lands on the wrong chunk. Same length is not the same order, so this compares
+        # the ids themselves and refuses rather than upserting a silently shuffled index.
+        sparse_docs: list[tuple[list[int], list[float]]] | None = None
+        if sparse is not None:
+            sparse_ids = list(getattr(sparse, "chunk_ids", []))
+            if sparse_ids != list(chunk_ids):
+                raise ValueError(
+                    "the sparse retriever's corpus order does not match the dense one, so "
+                    "its weights would be upserted against the wrong chunks "
+                    f"({len(sparse_ids)} vs {len(chunk_ids)} ids). Build both from the "
+                    "same chunk list."
+                )
+            sparse_docs = sparse.sparse_document_vectors()
+
+        store = cls(
+            client=client,
+            collection=collection,
+            chunk_ids=chunk_ids,
+            dim=dim,
+            has_sparse=sparse_docs is not None,
+        )
         # Point ids are derived from the chunk id, not from enumeration order, so a
         # re-upsert of the same corpus lands on the same points and a partial rebuild
         # cannot silently duplicate a chunk under a second id.
@@ -583,13 +636,11 @@ class QdrantStore:
                 cid = chunk_ids[i]
                 pid = str(uuid.uuid5(uuid.NAMESPACE_URL, cid))
                 store._ids[pid] = cid
-                points.append(
-                    models.PointStruct(
-                        id=pid,
-                        vector={DENSE_VECTOR: matrix[i].tolist()},
-                        payload={"chunk_id": cid},
-                    )
-                )
+                vectors: dict[str, Any] = {DENSE_VECTOR: matrix[i].tolist()}
+                if sparse_docs is not None:
+                    idxs, vals = sparse_docs[i]
+                    vectors[SPARSE_VECTOR] = models.SparseVector(indices=idxs, values=vals)
+                points.append(models.PointStruct(id=pid, vector=vectors, payload={"chunk_id": cid}))
             if points:
                 client.upsert(collection_name=collection, points=points, wait=True)
         return store
@@ -640,26 +691,114 @@ class QdrantRetriever:
     def __init__(
         self,
         store: QdrantStore,
-        dense: Any,
+        dense: Any = None,
         *,
+        sparse: Any = None,
+        mode: str = "dense",
         ef: int | None = None,
         name: str | None = None,
     ) -> None:
+        if mode not in {"dense", "sparse", "hybrid"}:
+            raise ValueError(f"mode must be dense|sparse|hybrid, got {mode!r}")
+        if mode in {"dense", "hybrid"} and dense is None:
+            raise ValueError(f"mode={mode!r} needs a dense retriever to encode the query")
+        if mode in {"sparse", "hybrid"}:
+            if sparse is None:
+                raise ValueError(f"mode={mode!r} needs the BM25 retriever that built the vectors")
+            # The collection declares `sparse_vectors_config` whether or not anything was
+            # written to it, and Qdrant answers a query against an unpopulated sparse
+            # vector with an empty list, not an error. Without this check `mode="sparse"`
+            # would return nothing and read as "the corpus has no lexical match".
+            if not store.has_sparse:
+                raise ValueError(
+                    "this collection has no sparse vectors -- rebuild with "
+                    "`QdrantStore.from_dense(..., sparse=bm25)`. A sparse query would "
+                    "otherwise return an empty ranking that looks like a real miss."
+                )
         self.store = store
         self.dense = dense
+        self.sparse = sparse
+        self.mode = mode
         self.ef = ef
-        self.name = name or f"qdrant {getattr(dense, 'name', 'dense')}" + (
-            f" ef={ef}" if ef is not None else ""
-        )
+        base = {
+            "dense": f"qdrant {getattr(dense, 'name', 'dense')}",
+            "sparse": f"qdrant-sparse {getattr(sparse, 'name', 'bm25')}",
+            "hybrid": "qdrant-hybrid rrf",
+        }[mode]
+        self.name = name or base + (f" ef={ef}" if ef is not None and mode != "sparse" else "")
 
     def __len__(self) -> int:
         return len(self.store)
+
+    def _search_with_sparse(self, query: str, k: int = 10) -> list[Hit]:
+        """Sparse-only or server-side-fused retrieval.
+
+        `hybrid` is the reason this module exists: Qdrant holds both named vectors and
+        does the fusion itself, so the two candidate lists never leave the store. That is
+        what the locked decision meant by "hybrid lives in one store", and until sparse
+        vectors were actually written it was true of the plan and not of the code.
+
+        The fusion is **RRF**, and Phase 3 measured naive RRF as *worse than sparse alone*
+        on this corpus -- fusion rewards agreement, so a retriever with no signal does not
+        abstain, it votes. This path is therefore built to be measured, not assumed
+        better; `qdrant-hybrid rrf` is another row in the ablation, not a default.
+        """
+        from qdrant_client import models
+
+        k = max(1, min(k, len(self.store)))
+        idxs, vals = self.sparse.sparse_query_vector(query)
+        # No in-vocabulary term means no lexical evidence. Returning an empty ranking is
+        # the same choice `BM25Retriever.search` makes and for the same reason: a
+        # constant-score ranking handed to fusion becomes noise consumed as ranks.
+        if not idxs:
+            if self.mode == "sparse":
+                return []
+            sparse_vec = None
+        else:
+            sparse_vec = models.SparseVector(indices=idxs, values=vals)
+
+        if self.mode == "sparse":
+            result = self.store.client.query_points(
+                collection_name=self.store.collection,
+                query=sparse_vec,
+                using=SPARSE_VECTOR,
+                limit=k,
+                with_payload=True,
+            )
+        else:
+            params = models.SearchParams(hnsw_ef=self.ef) if self.ef is not None else None
+            qv = self.dense._query_vector(query)
+            # Each arm over-fetches so fusion has something to fuse: taking only k from
+            # each means a document ranked k+1 by both can never surface, which defeats
+            # the point of combining them.
+            prefetch = [
+                models.Prefetch(query=qv.tolist(), using=DENSE_VECTOR, limit=k * 4, params=params)
+            ]
+            if sparse_vec is not None:
+                prefetch.append(models.Prefetch(query=sparse_vec, using=SPARSE_VECTOR, limit=k * 4))
+            result = self.store.client.query_points(
+                collection_name=self.store.collection,
+                prefetch=prefetch,
+                query=models.FusionQuery(fusion=models.Fusion.RRF),
+                limit=k,
+                with_payload=True,
+            )
+
+        hits: list[Hit] = []
+        for rank, point in enumerate(result.points, 1):
+            cid = (point.payload or {}).get("chunk_id") or self.store._ids.get(str(point.id))
+            if cid is None:
+                continue
+            hits.append(Hit(chunk_id=cid, score=float(point.score), rank=rank))
+        return hits
 
     def search(self, query: str, k: int = 10) -> list[Hit]:
         from qdrant_client import models
 
         if not len(self.store):
             return []
+        if self.mode in {"sparse", "hybrid"}:
+            return self._search_with_sparse(query, k)
         qv = self.dense._query_vector(query)
         k = max(1, min(k, len(self.store)))
         params = models.SearchParams(hnsw_ef=self.ef) if self.ef is not None else None

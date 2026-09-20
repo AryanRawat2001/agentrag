@@ -192,7 +192,7 @@ artifact here that cannot be regenerated, only redone.
 
 Python 3.11 · `uv` · `bm25s` · `sentence-transformers` (`bge-small-en-v1.5`) ·
 cross-encoder reranking · Qdrant · FastAPI · Docker/Compose · Gemini via raw `httpx` ·
-`pytest` (**1,116 tests passing**) · `ruff`
+`pytest` (**1,118 tests**) · `ruff`
 
 Artifacts: 22 files in `reports/`, every one
 regenerable by a command.

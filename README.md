@@ -21,7 +21,7 @@ renders from the live service. Also available as
 
 > **Status: Phases 0–8 of 9 shipped**, each behind two independent verification gates — a
 > code review, and a numerical audit that recomputes every published figure from raw data
-> without importing the code that produced it. **1,116 tests**, lint clean.
+> without importing the code that produced it. **1,118 tests** (2 skip without local model access), lint clean.
 >
 > Built and serving: corpus acquisition, extraction, three chunking strategies, the
 > retrieval evaluation harness, dense retrieval, three fusion methods, cross-encoder
@@ -29,8 +29,7 @@ renders from the live service. Also available as
 > citation verifier, the golden answer set, failure analysis, and a dashboard.
 >
 > Not done: **contextual retrieval** is built and tested but has never been run — it needs
-> a metered model. **Sparse vectors in Qdrant** are unimplemented, so "hybrid lives in one
-> store" is not yet true of this repo. The **demo recording** is deferred to a fresh
+> a metered model. The **demo recording** is deferred to a fresh
 > free-tier quota — a calendar constraint, not an incomplete deliverable.
 >
 > The **two-tier citation verifier** is the centre of it: tier 1 locates every claimed
@@ -40,6 +39,13 @@ renders from the live service. Also available as
 > calibrated against constructed negatives before use — a real answer paired with another
 > document's evidence, which cannot be supported — because a judge that answers
 > "supported" to everything scores perfectly on positives alone.
+
+**Sparse vectors now live in Qdrant.** `QdrantStore.from_dense(..., sparse=bm25)` writes
+named sparse vectors beside the dense ones and `QdrantRetriever(mode="hybrid")` fuses them
+server-side with RRF — so "hybrid lives in one store" is true of the code, not just the
+plan. The vectors are `bm25s`' own weights, so Qdrant sparse search reproduces the shipped
+`BM25Retriever` top-10 exactly (verified on 3,000 real chunks, max score delta 0.0). RRF is
+there to be measured, not preferred: Phase 3 found naive RRF worse than sparse alone.
 
 ## Quick start
 

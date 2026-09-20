@@ -1,4 +1,4 @@
-"""Retriever interface and the sparse (BM25) baseline.
+r"""Retriever interface and the sparse (BM25) baseline.
 
 Every retriever answers the same question — given a query, return ranked
 `(chunk_id, score)` — so Phase 2's harness can score any of them and Phase 3 can
@@ -24,19 +24,31 @@ was partly written into the index — near-leakage rather than retrieval.
 `heading_mode` separates them, and needs **three** settings rather than two. The
 obvious two-way switch (`embed_text` vs `text`) does not isolate anything, because a
 section's `text` *begins with its own heading* — the span starts at the heading line —
-so **27.1%** of `structural` chunks still carry the heading in the "off" condition
-(3,720 of 13,706; equivalently 28.6% of the 13,000 chunks that carry a heading label at
+so **30.1%** of `structural` chunks still carry the heading in the "off" condition
+(4,038 of 13,423; equivalently 31.7% of the 12,720 chunks that carry a heading label at
 all — the two figures have different denominators, and an earlier version of this note
 printed the labelled-only figure beside the 94.8% above as though they were comparable).
 
-Those counts are from the **pre-quarantine** corpus, superseded: the corpus now holds
-13,423 chunks over 152 indexable documents, after three were excluded for broken text
-layers. The overlap is of the same order on the current corpus and the argument for three
-`heading_mode` settings is unaffected, but the exact figure is not re-derivable here —
-the original measurement's definition of "carries the heading" is not recorded, and
-substituting a freshly-invented definition would produce a number that looks like a
-correction while measuring something slightly different. Recomputing it properly means
-re-running the ablation, which is a Phase 9 task.
+**The definition, recorded so the figure stays re-derivable.** A chunk "carries its
+heading" when the whitespace-normalised `section_heading` is a *prefix* of the
+whitespace-normalised `text` — the undecorated source slice, which is what the "off"
+condition indexes. That is the mechanism stated above: the structural span opens on the
+heading line, so the heading is inside the span whether or not `embed_text` prepends it.
+Reproduce with::
+
+    import json, re
+    norm = lambda s: re.sub(r"\s+", " ", s or "").strip().lower()
+    cs = [json.loads(l) for l in open("data/chunks/structural.jsonl")]
+    n = sum(1 for c in cs if norm(c["section_heading"]) and
+            norm(c["text"]).startswith(norm(c["section_heading"])))
+
+An earlier version of this note carried 27.1% (3,720 of 13,706) from the
+**pre-quarantine** corpus and marked it superseded but unrecoverable, because the original
+definition of "carries the heading" had not been written down. The fix was to record a
+definition rather than re-run the ablation: the figure above is that definition applied to
+the current corpus. The looser reading — heading appearing *anywhere* in `text` rather
+than as a prefix — gives 31.5% (4,224 of 13,423), so the conclusion does not turn on which
+is chosen, and the argument for three `heading_mode` settings is unaffected either way.
 
 Measured on `section_lookup` recall@10 for `structural` at the shipped 1,024-char
 target, the two-way switch understates the heading effect by 1.9x:
@@ -149,6 +161,16 @@ class BM25Retriever:
     def __len__(self) -> int:
         return len(self._chunk_ids)
 
+    @property
+    def chunk_ids(self) -> list[str]:
+        """Corpus order, which `sparse_document_vectors` is aligned to.
+
+        Public because a vector store loading those vectors has to prove the alignment
+        rather than trust it: two same-length corpora in different orders would upsert
+        every weight against the wrong chunk and still look fine.
+        """
+        return list(self._chunk_ids)
+
     def search(self, query: str, k: int = 10) -> list[Hit]:
         prepared = tok_mod.augment_query(query) if self.use_identifier_atoms else query
         query_tokens = bm25s.tokenize(
@@ -207,6 +229,71 @@ class BM25Retriever:
         # metrics are window-edge ones and no headline figure depends on them.
         hits.sort(key=lambda h: (-h.score, h.chunk_id))
         return [Hit(chunk_id=h.chunk_id, score=h.score, rank=i) for i, h in enumerate(hits, 1)]
+
+    # ---- sparse-vector export -------------------------------------------------------
+    #
+    # These exist so `vectorstore.py` can put *this* retriever's lexical signal into
+    # Qdrant as named sparse vectors, rather than building a second, differently
+    # tokenised one alongside it. That distinction is the whole point: a sparse row in
+    # the ablation is only comparable to the `bm25` row if both indexes see the same
+    # tokens, the same identifier atoms, the same stopwords and the same heading mode.
+    # Re-deriving any of that in the vector store would silently measure a different
+    # retriever and attribute the difference to Qdrant.
+    #
+    # The weights exported here are the ones `bm25s` scores with, read out of its own
+    # index rather than recomputed from k1/b. A dot product against a query vector of
+    # term counts therefore reproduces `retrieve()`'s scores exactly -- verified in
+    # `tests/test_vectorstore.py`, not assumed.
+
+    def sparse_document_vectors(self) -> list[tuple[list[int], list[float]]]:
+        """Per-chunk `(term_ids, bm25_weights)`, aligned to the corpus order.
+
+        `bm25s` stores its weights column-compressed *by term*: `indptr` is indexed by
+        term id and `indices` holds document ids. This inverts that into per-document
+        vectors, which is the layout a vector store wants.
+        """
+        scores = getattr(self._index, "scores", None)
+        if not scores:
+            return [([], []) for _ in self._chunk_ids]
+        data, indices, indptr = scores["data"], scores["indices"], scores["indptr"]
+        per_doc: list[tuple[list[int], list[float]]] = [([], []) for _ in self._chunk_ids]
+        n_terms = len(indptr) - 1
+        for term_id in range(n_terms):
+            for pos in range(int(indptr[term_id]), int(indptr[term_id + 1])):
+                doc = int(indices[pos])
+                if 0 <= doc < len(per_doc):
+                    per_doc[doc][0].append(term_id)
+                    per_doc[doc][1].append(float(data[pos]))
+        return per_doc
+
+    def sparse_query_vector(self, query: str) -> tuple[list[int], list[float]]:
+        """`(term_ids, counts)` for a query, using this retriever's own tokenizer.
+
+        Values are occurrence counts rather than 1.0 because `bm25s` sums a repeated
+        query term's contribution once per occurrence; a binary vector would score a
+        doubled term differently from `retrieve()` and break the equivalence.
+
+        Out-of-vocabulary terms are dropped, which is what makes an all-OOV query return
+        nothing instead of an arbitrary constant-score ranking -- the same failure the
+        `search` path documents above.
+        """
+        if not self._vocab:
+            return [], []
+        prepared = tok_mod.augment_query(query) if self.use_identifier_atoms else query
+        tokens = bm25s.tokenize(
+            [prepared], stopwords=self.stopwords, show_progress=False, return_ids=False
+        )
+        if not tokens or not tokens[0]:
+            return [], []
+        counts: dict[int, float] = {}
+        for term in tokens[0]:
+            tid = self._vocab.get(term)
+            if tid is not None:
+                counts[int(tid)] = counts.get(int(tid), 0.0) + 1.0
+        if not counts:
+            return [], []
+        ids = sorted(counts)
+        return ids, [counts[i] for i in ids]
 
 
 def load_chunks(path: Any) -> list[dict[str, Any]]:
