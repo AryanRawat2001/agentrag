@@ -1,0 +1,362 @@
+{
+  "qdrant_version": "1.19.0",
+  "n_vectors": 13423,
+  "indexed_vectors": 13423,
+  "dim": 384,
+  "m": 16,
+  "ef_construct": 100,
+  "full_scan_threshold": 10000,
+  "indexed_per_build": [
+    13423,
+    13423,
+    13423,
+    13423,
+    13423
+  ],
+  "k": 10,
+  "n_queries": 60,
+  "n_builds": 5,
+  "within_build_identical": true,
+  "exact_p50_ms": 0.4581454995786771,
+  "exact_p95_ms": 0.6941669998923317,
+  "bare_http_p50_ms": 0.7796244972269051,
+  "latency_conventions": "p50 = interpolated median; p95 = nearest rank",
+  "default": {
+    "ef": null,
+    "k": 10,
+    "n_queries": 60,
+    "n_builds": 5,
+    "recall_at_k": 0.9883,
+    "recall_min": 0.9833,
+    "recall_max": 0.9883,
+    "exact_match_rate": 0.9,
+    "identical_min": 0.85,
+    "identical_max": 0.9,
+    "recall_by_build": [
+      0.9833,
+      0.9883,
+      0.9883,
+      0.9883,
+      0.9883
+    ],
+    "identical_by_build": [
+      0.85,
+      0.9,
+      0.9,
+      0.9,
+      0.8833
+    ],
+    "p50_by_build": [
+      3.569,
+      3.393,
+      3.526,
+      3.273,
+      3.251
+    ],
+    "p95_by_build": [
+      6.65,
+      5.274,
+      5.083,
+      4.064,
+      4.915
+    ],
+    "p50_ms": 3.393,
+    "p95_ms": 6.65
+  },
+  "sweep": [
+    {
+      "ef": 4,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.8517,
+      "recall_min": 0.8217,
+      "recall_max": 0.8683,
+      "exact_match_rate": 0.3167,
+      "identical_min": 0.2833,
+      "identical_max": 0.3667,
+      "recall_by_build": [
+        0.86,
+        0.8383,
+        0.8517,
+        0.8683,
+        0.8217
+      ],
+      "identical_by_build": [
+        0.3333,
+        0.2833,
+        0.3167,
+        0.3667,
+        0.3167
+      ],
+      "p50_by_build": [
+        2.821,
+        3.051,
+        2.708,
+        2.673,
+        2.841
+      ],
+      "p95_by_build": [
+        5.095,
+        5.468,
+        3.282,
+        3.844,
+        7.486
+      ],
+      "p50_ms": 2.821,
+      "p95_ms": 7.486
+    },
+    {
+      "ef": 8,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.8517,
+      "recall_min": 0.8217,
+      "recall_max": 0.8683,
+      "exact_match_rate": 0.3167,
+      "identical_min": 0.2833,
+      "identical_max": 0.3667,
+      "recall_by_build": [
+        0.86,
+        0.8383,
+        0.8517,
+        0.8683,
+        0.8217
+      ],
+      "identical_by_build": [
+        0.3333,
+        0.2833,
+        0.3167,
+        0.3667,
+        0.3167
+      ],
+      "p50_by_build": [
+        2.701,
+        2.965,
+        2.688,
+        2.626,
+        3.004
+      ],
+      "p95_by_build": [
+        5.12,
+        4.94,
+        3.442,
+        3.06,
+        5.544
+      ],
+      "p50_ms": 2.701,
+      "p95_ms": 5.544
+    },
+    {
+      "ef": 16,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.9167,
+      "recall_min": 0.905,
+      "recall_max": 0.9183,
+      "exact_match_rate": 0.5333,
+      "identical_min": 0.4833,
+      "identical_max": 0.5667,
+      "recall_by_build": [
+        0.9183,
+        0.9167,
+        0.91,
+        0.9183,
+        0.905
+      ],
+      "identical_by_build": [
+        0.55,
+        0.5333,
+        0.5333,
+        0.5667,
+        0.4833
+      ],
+      "p50_by_build": [
+        2.982,
+        2.98,
+        2.75,
+        2.682,
+        3.182
+      ],
+      "p95_by_build": [
+        5.584,
+        4.545,
+        3.655,
+        3.51,
+        4.422
+      ],
+      "p50_ms": 2.98,
+      "p95_ms": 5.584
+    },
+    {
+      "ef": 32,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.9583,
+      "recall_min": 0.955,
+      "recall_max": 0.9667,
+      "exact_match_rate": 0.7333,
+      "identical_min": 0.7167,
+      "identical_max": 0.7667,
+      "recall_by_build": [
+        0.9667,
+        0.955,
+        0.9583,
+        0.9567,
+        0.965
+      ],
+      "identical_by_build": [
+        0.7667,
+        0.7167,
+        0.7333,
+        0.7333,
+        0.7667
+      ],
+      "p50_by_build": [
+        2.772,
+        2.827,
+        2.854,
+        2.914,
+        3.455
+      ],
+      "p95_by_build": [
+        3.854,
+        4.164,
+        4.051,
+        4.605,
+        5.121
+      ],
+      "p50_ms": 2.854,
+      "p95_ms": 5.121
+    },
+    {
+      "ef": 64,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.985,
+      "recall_min": 0.98,
+      "recall_max": 0.9867,
+      "exact_match_rate": 0.9,
+      "identical_min": 0.8333,
+      "identical_max": 0.9,
+      "recall_by_build": [
+        0.98,
+        0.985,
+        0.985,
+        0.9867,
+        0.985
+      ],
+      "identical_by_build": [
+        0.8333,
+        0.9,
+        0.9,
+        0.9,
+        0.8667
+      ],
+      "p50_by_build": [
+        2.98,
+        2.895,
+        3.133,
+        2.76,
+        3.394
+      ],
+      "p95_by_build": [
+        5.246,
+        3.385,
+        4.956,
+        3.608,
+        6.629
+      ],
+      "p50_ms": 2.98,
+      "p95_ms": 6.629
+    },
+    {
+      "ef": 128,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.99,
+      "recall_min": 0.99,
+      "recall_max": 0.995,
+      "exact_match_rate": 0.9167,
+      "identical_min": 0.9,
+      "identical_max": 0.95,
+      "recall_by_build": [
+        0.9933,
+        0.99,
+        0.99,
+        0.99,
+        0.995
+      ],
+      "identical_by_build": [
+        0.95,
+        0.9,
+        0.9,
+        0.9167,
+        0.95
+      ],
+      "p50_by_build": [
+        3.114,
+        3.049,
+        2.905,
+        3.196,
+        3.184
+      ],
+      "p95_by_build": [
+        4.991,
+        3.642,
+        3.465,
+        4.465,
+        4.783
+      ],
+      "p50_ms": 3.114,
+      "p95_ms": 4.991
+    },
+    {
+      "ef": 256,
+      "k": 10,
+      "n_queries": 60,
+      "n_builds": 5,
+      "recall_at_k": 0.9983,
+      "recall_min": 0.9967,
+      "recall_max": 1.0,
+      "exact_match_rate": 0.9833,
+      "identical_min": 0.9667,
+      "identical_max": 1.0,
+      "recall_by_build": [
+        1.0,
+        0.9967,
+        0.9967,
+        0.9983,
+        1.0
+      ],
+      "identical_by_build": [
+        1.0,
+        0.9667,
+        0.9667,
+        0.9833,
+        1.0
+      ],
+      "p50_by_build": [
+        3.317,
+        3.298,
+        3.527,
+        3.734,
+        3.485
+      ],
+      "p95_by_build": [
+        3.979,
+        4.603,
+        4.674,
+        9.326,
+        4.325
+      ],
+      "p50_ms": 3.485,
+      "p95_ms": 9.326
+    }
+  ]
+}

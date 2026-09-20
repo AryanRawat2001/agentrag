@@ -1,0 +1,627 @@
+{
+  "chunking": "structural",
+  "summary": {
+    "n_pairs": 159,
+    "n_flagged": 24,
+    "flagged_share": 0.1509,
+    "by_kind": {
+      "actor_not_in_source": 3,
+      "modal_added_to_unmodalised_source": 2,
+      "modal_strengthened": 15,
+      "modal_strengthened_in_context": 15,
+      "polarity_inverted": 2
+    },
+    "by_severity": {
+      "high": 20,
+      "medium": 4,
+      "low": 0
+    },
+    "verdicts_recorded": 25,
+    "verdicts_retired_by_detector_fixes": 1,
+    "orphan_verdicts": [],
+    "flagged_unjudged": 0
+  },
+  "verdicts": {
+    "ctgov-NCT00567567-Prot_SAP_000::gold::002": {
+      "verdict": "keep",
+      "reason": "source: \"All patients WILL have a double lumen central venous line placed prior to beginning induction chemotherapy.\" In a protocol, will states what the protocol mandates, so must is a fair reading and the content is exact."
+    },
+    "ctgov-NCT00567567-Prot_SAP_000::gold::005": {
+      "verdict": "keep",
+      "reason": "source is imperative: \"Ship via Federal Express Prior Overnight\". An imperative obliges; the flagged will and may belong to other clauses. Address and delivery window are correct."
+    },
+    "ctgov-NCT01511614-Prot_SAP_000::gold::004": {
+      "verdict": "keep",
+      "reason": "source describes task mechanics (\"respond with a button press when they notice three odd or three even numbers\"). The answer must press is framing, and the task content -- three consecutive odd or even digits -- is exact."
+    },
+    "ctgov-NCT02717455-Prot_SAP_000::gold::016": {
+      "verdict": "keep",
+      "reason": "source is a bare specification: \"Axial T2 FLAIR images (slice thickness 5 mm skip 0 mm, 20 cm FOV)\". Every figure matches, and protocol-specified imaging parameters are requirements."
+    },
+    "ctgov-NCT02717455-Prot_SAP_000::gold::017": {
+      "verdict": "keep",
+      "reason": "A Complete Response REQUIRES the total disappearance of all evaluable tumor is definitional, not a duty owed by the patient. The attribution check reads a definition as an obligation."
+    },
+    "ctgov-NCT02942264-Prot_SAP_000::gold::012": {
+      "verdict": "keep",
+      "reason": "protocol will be obtained -> must be obtained; tissue-block dimensions (5 mm x 5 mm) and stated purpose are exact."
+    },
+    "ctgov-NCT02942264-Prot_SAP_000::gold::016": {
+      "verdict": "reject",
+      "reason": "source: \"the study treatment SHOULD be discontinued immediately, and the pregnancy reported to the Sponsor no later than 24 hours\". Answer: \"MUST be discontinued\" and \"MUST be reported\". A recommendation restated as a requirement, on a pregnancy safety instruction. The 24-hour figure is right; the obligation level is not."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::021": {
+      "verdict": "reject",
+      "reason": "source: \"CXA-10 capsules SHOULD be stored refrigerated between 2 and 8C\". Answer: \"MUST be refrigerated\". A storage recommendation restated as a requirement."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::023": {
+      "verdict": "reject",
+      "reason": "source: \"For safety reasons, we MAY discontinue the study if the first two subjects enrolled experience any unexpected fatal or life-threatening events\". Answer: \"The study WILL be discontinued and halted\". A discretionary safety action restated as a commitment. Caught only by the sentence-level check: the chunk-level comparison mislabelled it as weakened, because the chunk contains required in another clause."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::025": {
+      "verdict": "keep",
+      "reason": "the protocol commits: \"The FDA WILL be notified by telephone or facsimile ... no later than 7 calendar days\". The answer says must be notified within 7 calendar days -- same commitment, same deadline."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::027": {
+      "verdict": "keep",
+      "reason": "the disputed claim is verbatim in the source: \"A high fat meal MUST be avoided.\" The sentence-level check selected the wrong sentence because the first clause of the answer dominated the overlap score, and the polarity flag compared should across two unrelated clauses."
+    },
+    "ctgov-NCT04660552-Prot_003::gold::024": {
+      "verdict": "keep",
+      "reason": "source: \"then the child WILL HAVE TO BE withdrawn from the study\". Will have to be is an obligation, so must be withdrawn is correct; the lexicon ranks the bare will and cannot see the periphrastic form."
+    },
+    "fda-100907::gold::025": {
+      "verdict": "keep",
+      "reason": "the 180-day comment window and should be submitted both match the guidance; the selected sentence was the you can comment at any time aside rather than the deadline clause."
+    },
+    "fda-113923::gold::033": {
+      "verdict": "keep",
+      "reason": "source is 21 CFR 507.175(c)(7), a binding regulation enumerating required audit documentation (i)-(vi). Must include is correct; the regulation carries the obligation in its heading rather than in each item."
+    },
+    "fda-136987::gold::044": {
+      "verdict": "keep",
+      "reason": "the answer hedges correctly -- MAY BE REQUIRED more frequently if indicated, against a source reading usually on a monthly basis but more frequently when indicated. The flag fires on required inside a permissive phrase, which a max-strength rule cannot see past."
+    },
+    "fda-136987::gold::049": {
+      "verdict": "keep",
+      "reason": "source is imperative (\"If applicable, provide the labeling, a list of ingredients and the Safety Data Sheet\"). The answer uses should, which is weaker than the imperative and exactly right for non-binding guidance."
+    },
+    "fda-171592::gold::053": {
+      "verdict": "keep",
+      "reason": "source enumerates statutory duties under section 582(g)(1)(F): \"(5) Have systems and processes in place to accept saleable returns...\". The guidance is non-binding but the enumerated items restate the statute, which obliges."
+    },
+    "fda-171592::gold::058": {
+      "verdict": "keep",
+      "reason": "same document and pattern as ::053 -- an enumerated statutory duty, restated."
+    },
+    "fda-72414::gold::089": {
+      "verdict": "keep",
+      "reason": "the source states the duty in the passive (\"A notice of the paragraph IV certification MUST be provided to each owner\"), so it names no actor and the applicant -- who does provide it -- looks novel. Passive voice defeats the attribution check."
+    },
+    "fda-75426::gold::085": {
+      "verdict": "reject",
+      "reason": "source: \"The question presented for a vote SHOULD have minimal qualifiers, not be leading, and should avoid the use of double or triple negatives.\" Answer: \"MUST contain minimal qualifiers, MUST not be leading\". Two strengthenings in one answer, in advisory-committee guidance where should is explicitly non-binding."
+    },
+    "fda-75426::gold::087": {
+      "verdict": "reject",
+      "reason": "source: \"the names of the committee members and their respective votes SHOULD be read aloud\". Answer: \"MUST be read aloud and entered into the public record.\""
+    },
+    "fda-75426::gold::089": {
+      "verdict": "reject",
+      "reason": "source: \"the Chair SHOULD first check with the DFO or other senior FDA officials\". Answer: \"The Chair MUST verify with the DFO or senior FDA officials.\""
+    },
+    "fda-78268::gold::094": {
+      "verdict": "reject",
+      "reason": "source frames the whole list as advice: \"What special RECOMMENDATIONS apply ... The following RECOMMENDATIONS apply to amendments, updates, and supplements\", and the item itself is \"Begin each filename with the date (YYYY-MM-DD)\". Answer: \"must begin with the date\". Changed from keep to reject at the Phase 8 code-review gate. My original keep was wrong twice over: the recorded reason only checked content (the YYYY-MM-DD form) and never addressed obligation level, and it was inconsistent with ::097 in the same document, which I rejected for exactly this. The detector had steered me there -- `recommend`/`recommendations` were missing from the modal lexicon, so the frame scored 0 and routed to the lenient modal_added_to_unmodalised_source branch at medium severity instead of high."
+    },
+    "fda-78268::gold::097": {
+      "verdict": "reject",
+      "reason": "source: \"You SHOULD include a Table of Contents: - With any submission regarding a GRAS notice...\". Answer: \"A Table of Contents IS REQUIRED for any submission\". The question is leading in the same direction (must always include), so both halves assert an obligation the guidance does not."
+    },
+    "fda-88114::gold::103": {
+      "verdict": "keep",
+      "reason": "investigator duties under the exception-from-informed-consent regulation are requirements. The sentence-level check selected the clause about a subject dying before the representative was contacted rather than the obligation clause."
+    }
+  },
+  "reviews": [
+    {
+      "pair_id": "ctgov-NCT00567567-Prot_SAP_000::gold::002",
+      "doc_id": "ctgov-NCT00567567-Prot_SAP_000",
+      "question": "What standard must central venous lines meet prior to starting induction chemotherapy in ANBL0532?",
+      "answer": "All patients must have a double lumen central venous line placed before beginning induction chemotherapy.",
+      "relevant_source": "4.1.1 Central Line All patients will have a double lumen central venous line placed prior to beginning induction chemotherapy.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "All patients must have a double lumen central venous line placed before...",
+          "source_excerpt": "...SC for transplant or who have GFR < 60 ml/min/1.73 m 2 will be taken off protocol therapy. Refer to protocol sect..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"will\" (descriptive)",
+          "answer_excerpt": "All patients must have a double lumen central venous line placed before...",
+          "source_excerpt": "4.1.1 Central Line All patients will have a double lumen central venous line placed prior to beginning induction chemotherapy."
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT00567567-Prot_SAP_000::gold::005",
+      "doc_id": "ctgov-NCT00567567-Prot_SAP_000",
+      "question": "Where should immunocytochemistry bone marrow aspirate samples be shipped, and via which delivery schedule?",
+      "answer": "Samples must be shipped overnight via Federal Express (Priority Overnight) to Dr. Robert C. Seeger at the Neuroblastoma Biology Reference Laboratory, Children's Hospital of Los Angeles, for Tuesday through Friday delivery.",
+      "relevant_source": "Neuroblastoma Biology Reference Laboratory Smith Research Tower, Room #509 Children's Hospital of Los Angeles 4546 Sunset Blvd.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "Samples must be shipped overnight via Federal Express (Priority Ove...",
+          "source_excerpt": "...rate samples coll ected in sodium heparin tubes sample will be shipped overnight at room temperature for immunocy..."
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT01511614-Prot_SAP_000::gold::004",
+      "doc_id": "ctgov-NCT01511614-Prot_SAP_000",
+      "question": "How is the Rapid Visual Information Processing Task (RVIP) performed by participants?",
+      "answer": "Participants monitor a continuous stream of single digits on a screen and must press a button when they identify three consecutive odd or three consecutive even numbers.",
+      "relevant_source": "The task has participants monitor a continuous stream of single digits presented on a screen in front of them and respond with a button press when they notice three odd or three even numbers presented consecutively (e.g., 5,9,7 or 4,2,8).",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "...r a continuous stream of single digits on a screen and must press a button when they identify three consecutive od...",
+          "source_excerpt": "...lly inserted, and before the PM scan session, a nurse will take a blood sample from participants that will later..."
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT02717455-Prot_SAP_000::gold::016",
+      "doc_id": "ctgov-NCT02717455-Prot_SAP_000",
+      "question": "What are the required parameters for Axial T2 FLAIR images during a 1.5 T Brain MR?",
+      "answer": "For the Axial T2 FLAIR sequence, the slice thickness must be 5 mm with a skip of 0 mm, using a 20 cm field of view (FOV).",
+      "relevant_source": "03/26/2021 70 \u2022 Axial T2 FLAIR images (slice thickness 5 mm skip 0 mm, 20 cm FOV) \u2022 Axial DWI, 6 directions (slice thickness 5 mm skip 0 mm, 26 cm FOV) \u2022 Post gadolinium sagittal 3DFSPGR images (slice thickness 1.5 mm no skip, 24 cm FOV) \u2022 Axial T1 post gadolinium (slice thickness 3 mm no skip, 16 cm",
+      "severity": "medium",
+      "flags": [
+        {
+          "kind": "modal_added_to_unmodalised_source",
+          "severity": "medium",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is no modal at all",
+          "answer_excerpt": "For the Axial T2 FLAIR sequence, the slice thickness must be 5 mm with a skip of 0 mm, using a 20 cm field of vi...",
+          "source_excerpt": ""
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT02717455-Prot_SAP_000::gold::017",
+      "doc_id": "ctgov-NCT02717455-Prot_SAP_000",
+      "question": "What criteria must be met for a patient to be considered as having a Complete Response (CR) based on MR imaging?",
+      "answer": "A Complete Response requires the total disappearance of all evaluable tumor and mass effect on MR, while the patient is on a stable or decreasing dose of corticosteroids and has a stable or improving neurologic exam.",
+      "relevant_source": "11.2 Tumor Response Criteria 11.2.1 Complete Response (CR) Complete disappearance on MR of all evaluable tumor and mass effect, on a stable or decreasing dose of corticosteroids (or receiving only adrenal replacement doses), accompanied by a stable or improving neurologic examination.",
+      "severity": "medium",
+      "flags": [
+        {
+          "kind": "actor_not_in_source",
+          "severity": "medium",
+          "detail": "answer places an obligation on \"patient\", which the cited source never names (source names: no party)",
+          "answer_excerpt": "...f all evaluable tumor and mass effect on MR, while the patient is on a stable or decreasing dose of corticosteroids a...",
+          "source_excerpt": ""
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT02942264-Prot_SAP_000::gold::012",
+      "doc_id": "ctgov-NCT02942264-Prot_SAP_000",
+      "question": "What surgical sample tissue specimens are required before a patient can enter the clinical trial?",
+      "answer": "A representative paraffin tissue block measuring at least 5 mm x 5 mm or unstained slides from previous surgery must be obtained to confirm histological diagnosis and molecular markers.",
+      "relevant_source": "A representative paraffin tissue block (at least 5 mm x 5 mm) or unstained slides will be obtained from previous surgery to confirm the histological diagnosis and molecular markers before entry into the clinical trial.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "...5 mm x 5 mm or unstained slides from previous surgery must be obtained to confirm histological diagnosis and mole...",
+          "source_excerpt": "2.2.3 Unstained paraffin tissue from surgical samples will be obtained. A representative paraffin tissue block (..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"will\" (descriptive)",
+          "answer_excerpt": "...5 mm x 5 mm or unstained slides from previous surgery must be obtained to confirm histological diagnosis and mole...",
+          "source_excerpt": "A representative paraffin tissue block (at least 5 mm x 5 mm) or unstained slides will be obtained from previous surgery to confirm the histological diagnosis and molecular markers before entry into the clinical trial."
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT02942264-Prot_SAP_000::gold::016",
+      "doc_id": "ctgov-NCT02942264-Prot_SAP_000",
+      "question": "What is the reporting timeframe requirement if a patient becomes pregnant during the study?",
+      "answer": "Study treatment must be discontinued immediately, and the pregnancy must be reported to the Sponsor no later than 24 hours after the Investigator becomes aware of it.",
+      "relevant_source": "8.5 REPORTING PREGNANCY 8.5.1 Maternal exposure If a patient becomes pregnant during the course of the study, the study treatment should be discontinued immediately, and the pregnancy reported to the Sponsor no later than 24 hours of when the Investigator becomes aware of it.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"should\" (recommended)",
+          "answer_excerpt": "Study treatment must be discontinued immediately, and the pregnancy must be...",
+          "source_excerpt": "...nt during the course of the study, the study treatment should be discontinued immediately, and the pregnancy report..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"should\" (recommended)",
+          "answer_excerpt": "Study treatment must be discontinued immediately, and the pregnancy must be...",
+          "source_excerpt": "8.5 REPORTING PREGNANCY 8.5.1 Maternal exposure If a patient becomes pregnant during the course of the study, the study treatment should be discontinued immediately, and the pregnancy reported to the Sponsor no later tha"
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT04125745-Prot_SAP_000::gold::021",
+      "doc_id": "ctgov-NCT04125745-Prot_SAP_000",
+      "question": "What are the storage requirements and temperature limits for CXA-10 capsules?",
+      "answer": "CXA-10 capsules must be refrigerated between 2 and 8\u00b0C (35 to 46\u00b0F). They can be kept at room temperature (20 to 25\u00b0C) for up to 48 hours, but should never be stored in direct sunlight or at temperatures exceeding 25\u00b0C.",
+      "relevant_source": "CXA-10 capsules should be stored refrigerated between 2 and 8\u00b0C (35 to 46\u00b0F).",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "CXA-10 capsules must be refrigerated between 2 and 8\u00b0C (35 to 46\u00b0F). They c...",
+          "source_excerpt": "...bility records of study drug received, dispensed, used will be maintained throughout the course of the study. Th..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"should\" (recommended)",
+          "answer_excerpt": "CXA-10 capsules must be refrigerated between 2 and 8\u00b0C (35 to 46\u00b0F). They c...",
+          "source_excerpt": "CXA-10 capsules should be stored refrigerated between 2 and 8\u00b0C (35 to 46\u00b0F)."
+        },
+        {
+          "kind": "polarity_inverted",
+          "severity": "high",
+          "detail": "answer uses \"should\" negated; the cited source only ever states it unnegated",
+          "answer_excerpt": "...room temperature (20 to 25\u00b0C) for up to 48 hours, but should never be stored in direct sunlight or at temperatures...",
+          "source_excerpt": "...essible only to authorized personnel. CXA-10 capsules should be stored refrigerated between 2 and 8\u00b0C (35 to 46\u00b0F)..."
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT04125745-Prot_SAP_000::gold::023",
+      "doc_id": "ctgov-NCT04125745-Prot_SAP_000",
+      "question": "Under what circumstances will the clinical trial be halted for safety review after the first two subjects are enrolled?",
+      "answer": "The study will be discontinued and halted for data review if the first two enrolled subjects experience any unexpected fatal or life-threatening events that are attributable to the study drug.",
+      "relevant_source": "For safety reasons, we may discontinue the study if the first two subjects enrolled experience any unexpected fatal or life-threatening events that can be attributed to the study drug;",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"will\" (descriptive) where the source says \"can\" (permissive)",
+          "answer_excerpt": "The study will be discontinued and halted for data review if the firs...",
+          "source_excerpt": "For safety reasons, we may discontinue the study if the first two subjects enrolled experience any unexpected fatal or life-threatening events that can be attributed to the study drug;"
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT04125745-Prot_SAP_000::gold::025",
+      "doc_id": "ctgov-NCT04125745-Prot_SAP_000",
+      "question": "What is the reporting timeline for notifying the FDA about a fatal or life-threatening adverse event?",
+      "answer": "The FDA must be notified via telephone or facsimile within 7 calendar days of the study receiving information about a fatal or life-threatening human adverse event.",
+      "relevant_source": "The FDA will be notified by telephone or facsimile transmission of a human adverse event that is fatal or life-threatening no later than 7 calendar days after receiving the respective human adverse event information, followed by the subsequent submission of a written IND Safety Report.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"will\" (descriptive)",
+          "answer_excerpt": "The FDA must be notified via telephone or facsimile within 7 calend...",
+          "source_excerpt": "The FDA will be notified by telephone or facsimile transmission of a human adverse event that is fatal or life-threatening no later than 7 calendar days after receiving the respective human adverse event information, fol"
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT04125745-Prot_SAP_000::gold::027",
+      "doc_id": "ctgov-NCT04125745-Prot_SAP_000",
+      "question": "What dietary instructions regarding fat content must subjects follow when taking CXA-10?",
+      "answer": "Subjects should take CXA-10 once daily in the morning with food. The meal or snack can contain up to approximately 30% fat, but high-fat meals must be avoided.",
+      "relevant_source": "Subjects will be instructed to take their CXA -10 dose once daily in the morning with food.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"will\" (descriptive)",
+          "answer_excerpt": "...ontain up to approximately 30% fat, but high-fat meals must be avoided.",
+          "source_excerpt": "Subjects will be instructed to take their CXA -10 dose once daily in the morning with food."
+        },
+        {
+          "kind": "polarity_inverted",
+          "severity": "high",
+          "detail": "answer uses \"should\" unnegated; the cited source only ever states it negated",
+          "answer_excerpt": "Subjects should take CXA-10 once daily in the morning with food. The m...",
+          "source_excerpt": "...Dosing will then commence at home. However, subjects should not take their morning dose of study medication at ho..."
+        }
+      ]
+    },
+    {
+      "pair_id": "ctgov-NCT04660552-Prot_003::gold::024",
+      "doc_id": "ctgov-NCT04660552-Prot_003",
+      "question": "Under what circumstance must a child participant be withdrawn from the study regarding session attendance?",
+      "answer": "A child must be withdrawn from the study if a parent cannot reschedule a cancelled session within a 3 day window.",
+      "relevant_source": "cancelled session within a 3 day window, then the child will have to be withdrawn from the study.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "A child must be withdrawn from the study if a parent cannot resched...",
+          "source_excerpt": "...ancelled session within a 3 day window, then the child will have to be withdrawn from the study. \u2022 If the child b..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"will\" (descriptive)",
+          "answer_excerpt": "A child must be withdrawn from the study if a parent cannot resched...",
+          "source_excerpt": "cancelled session within a 3 day window, then the child will have to be withdrawn from the study."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-100907::gold::025",
+      "doc_id": "fda-100907",
+      "question": "How many days from the publication of the notice in the Federal Register are allowed for submitting comments on the draft guidance?",
+      "answer": "Comments on the draft guidance should be submitted within 180 days of the publication of the notice announcing its availability in the Federal Register.",
+      "relevant_source": "Although you can comment on any guidance at any time (see 21 CFR 10.115(g)(5)), to ensure that FDA considers your comment on this draft guidance before we begin work on the final version of the guidance, submit either electronic or written comments on the draft guidance within 180days of publication in the Federal Register of the notice announcing the availability of the draft guidance.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"should\" (recommended) where the source says \"can\" (permissive)",
+          "answer_excerpt": "Comments on the draft guidance should be submitted within 180 days of the publication of the...",
+          "source_excerpt": "Although you can comment on any guidance at any time (see 21 CFR 10.115(g)(5)), to ensure that FDA considers your comment on this draft guidance before we begin work on the final version of the guidance, submit either el"
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-113923::gold::033",
+      "doc_id": "fda-113923",
+      "question": "What documentation must be maintained when an onsite audit is conducted as part of supplier verification?",
+      "answer": "Documentation must include the name of the supplier audited, the audit procedures, the dates conducted, audit conclusions, corrective actions taken for significant deficiencies, and evidence that the audit was performed by a qualified auditor.",
+      "relevant_source": "(v) Corrective actions taken in response to significant deficiencies identified during the audit;",
+      "severity": "medium",
+      "flags": [
+        {
+          "kind": "modal_added_to_unmodalised_source",
+          "severity": "medium",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is no modal at all",
+          "answer_excerpt": "Documentation must include the name of the supplier audited, the audit pr...",
+          "source_excerpt": ""
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-136987::gold::044",
+      "doc_id": "fda-136987",
+      "question": "How often are firms typically asked to provide Recall Status Reports to the FDA?",
+      "answer": "Recall Status Reports are usually requested on a monthly basis, though they may be required more frequently if indicated.",
+      "relevant_source": "You will be asked to provide Recall Status Reports to your DRC after initiating a recall (usually on Contains Nonbinding Recommendations 16 a monthly basis but more frequently when indicated).",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"required\" (mandatory); strongest in source is \"will\" (descriptive)",
+          "answer_excerpt": "...ually requested on a monthly basis, though they may be required more frequently if indicated.",
+          "source_excerpt": "...ling firm (or sub recalling firm if such is the case) will then be requested by FDA to take appropriate actions,..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"required\" (mandatory) where the source says \"will\" (descriptive)",
+          "answer_excerpt": "...ually requested on a monthly basis, though they may be required more frequently if indicated.",
+          "source_excerpt": "You will be asked to provide Recall Status Reports to your DRC after initiating a recall (usually on Contains Nonbinding Recommendations 16 a monthly basis but more frequently when indicated)."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-171592::gold::053",
+      "doc_id": "fda-171592",
+      "question": "What process must trading partners follow to handle saleable returns under section 582(g)(1)(F) starting November 27, 2023?",
+      "answer": "Trading partners must have systems and processes in place to accept saleable returns by associating the saleable return product with its corresponding transaction information and transaction statement.",
+      "relevant_source": "15 and (5) Have systems and processes in place to accept saleable returns under appropriate conditions, i.e., being able to associate the saleable return product with the transaction information and transaction statement associated with that product.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"can\" (permissive)",
+          "answer_excerpt": "Trading partners must have systems and processes in place to accept saleable...",
+          "source_excerpt": "...3, wholesale distributors, dispensers, and repackagers can use either paper-based or electronic-based methods 17..."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-171592::gold::058",
+      "doc_id": "fda-171592",
+      "question": "What system capabilities are required regarding information retrieval going back to the manufacturer during an investigation?",
+      "answer": "Trading partners must have systems and processes to facilitate gathering the information required to produce transaction information for a product going back to the manufacturer in the event of a recall, suspect or illegitimate product investigation, or an authorized trading partner request.",
+      "relevant_source": "Contains Nonbinding Recommendations 3 (3) Have systems and processes in place to promptly respond with the transaction information and transaction statement for a product upon a request by the Secretary,13 or other appropriate Federal or State official, in the event of a recall or for investigations of suspect or illegitimate product;14 (4) Have systems and processes in place to facilitate the gat",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"required\" (mandatory); strongest in source is \"recommendations\" (recommended)",
+          "answer_excerpt": "...and processes to facilitate gathering the information required to produce transaction information for a product going...",
+          "source_excerpt": "...ion 582(g)(1)(C) of the FD&C Act. Contains Nonbinding Recommendations 3 (3) Have systems and processes in place to prom..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"required\" (mandatory) where the source says \"recommendations\" (recommended)",
+          "answer_excerpt": "...and processes to facilitate gathering the information required to produce transaction information for a product going...",
+          "source_excerpt": "Contains Nonbinding Recommendations 3 (3) Have systems and processes in place to promptly respond with the transaction information and transaction statement for a product upon a request by the Secretary,13 or other appro"
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-72414::gold::089",
+      "doc_id": "fda-72414",
+      "question": "To whom must an ANDA applicant provide notice of a paragraph IV certification?",
+      "answer": "The applicant is required to provide notice to the holder of the approved NDA and to every owner of the patent that is the subject of the certification.",
+      "relevant_source": "A notice of the paragraph IV certification must be provided to each owner of the patent that is the subject of the certification and to the holder of the approved NDA to which the ANDA refers.",
+      "severity": "medium",
+      "flags": [
+        {
+          "kind": "actor_not_in_source",
+          "severity": "medium",
+          "detail": "answer places an obligation on \"applicant\", which the cited source never names (source names: agency, fda, subject)",
+          "answer_excerpt": "The applicant is required to provide notice to the holder of the app...",
+          "source_excerpt": ""
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-75426::gold::085",
+      "doc_id": "fda-75426",
+      "question": "What design standards should be met when drafting a question for an advisory committee vote?",
+      "answer": "Questions presented for a vote must contain minimal qualifiers, must not be leading, and should avoid using double or triple negatives.",
+      "relevant_source": "\u2022 The question presented for a vote should have minimal qualifiers, not be leading, and should avoid the use of double or triple negatives.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"encouraged\" (recommended)",
+          "answer_excerpt": "Questions presented for a vote must contain minimal qualifiers, must not be leading, and s...",
+          "source_excerpt": "...\u2022 The Chair and DFO of an advisory committee are encouraged to generate a robust discussion about the matter at i..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"should\" (recommended)",
+          "answer_excerpt": "Questions presented for a vote must contain minimal qualifiers, must not be leading, and s...",
+          "source_excerpt": "\u2022 The question presented for a vote should have minimal qualifiers, not be leading, and should avoid the use of double or triple negatives."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-75426::gold::087",
+      "doc_id": "fda-75426",
+      "question": "What public disclosure requirements follow the conclusion of an advisory committee vote?",
+      "answer": "Promptly after the vote is taken, the names of the committee members and their corresponding votes must be read aloud and entered into the public record.",
+      "relevant_source": "Further, whatever method of voting is employed, the names of the committee members and their respective votes should be read aloud and otherwise made part of the public record shortly after the vote is taken.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"recommendations\" (recommended)",
+          "answer_excerpt": "...of the committee members and their corresponding votes must be read aloud and entered into the public record.",
+          "source_excerpt": "...l of Economics, 107, 797-817. 5 Contains Nonbinding Recommendations 6 include a simultaneous show of hands, a simul..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"should\" (recommended)",
+          "answer_excerpt": "...of the committee members and their corresponding votes must be read aloud and entered into the public record.",
+          "source_excerpt": "Further, whatever method of voting is employed, the names of the committee members and their respective votes should be read aloud and otherwise made part of the public record shortly after the vote is taken."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-75426::gold::089",
+      "doc_id": "fda-75426",
+      "question": "What protocol must an Advisory Committee Chair follow if they wish to introduce a vote on a new question not originally posed by FDA?",
+      "answer": "The Chair must verify with the DFO or senior FDA officials that the new question fits the meeting purpose, aligns with meeting notices, and does not interfere with completed conflict-of-interest screenings.",
+      "relevant_source": "If the Chair wants to put another question to a vote on his/her own initiative, the Chair should first check with the DFO or other senior FDA officials present to be sure that the question is appropriate for the meeting, that it is consistent with the topic identified in the meeting notices, and that it will not affect the conflict-of-interest screening that had been completed prior to the meeting",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"encouraged\" (recommended)",
+          "answer_excerpt": "The Chair must verify with the DFO or senior FDA officials that the n...",
+          "source_excerpt": "ion is encouraged before the vote, there should be no discussion of the..."
+        },
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"should\" (recommended)",
+          "answer_excerpt": "The Chair must verify with the DFO or senior FDA officials that the n...",
+          "source_excerpt": "If the Chair wants to put another question to a vote on his/her own initiative, the Chair should first check with the DFO or other senior FDA officials present to be sure that the question is appropriate for the meeting,"
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-78268::gold::094",
+      "doc_id": "fda-78268",
+      "question": "How should files be named when submitting an amendment, update, or supplement in electronic format?",
+      "answer": "Each filename for an amendment, update, or supplement must begin with the date of submission in the YYYY-MM-DD format.",
+      "relevant_source": "(For example, an amendment or update to a FAP would include a separate file directed to each topic addressed in the amendment or update, whereas an amendment or supplement to a GRAS notice would include a single file regardless of the number of topics addressed in the amendment or supplement.) \u2022 Begin each filename with the date (YYYY-MM-DD) the amendment, update or supplement is submitted.",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"must\" (mandatory); strongest in source is \"recommendations\" (recommended)",
+          "answer_excerpt": "Each filename for an amendment, update, or supplement must begin with the date of submission in the YYYY-MM-DD fo...",
+          "source_excerpt": "...nd Supplements in Electronic Format 21. What special recommendations apply to the submission of amendments, updates, or su..."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-78268::gold::097",
+      "doc_id": "fda-78268",
+      "question": "Which types of submissions must always include a Table of Contents regardless of whether they are paper or electronic?",
+      "answer": "A Table of Contents is required for any submission regarding a GRAS notice, Biotechnology Final Consultation, or New Protein Consultation, including new submissions, amendments, or supplements.",
+      "relevant_source": "\u2022 With any submission regarding a GRAS notice, Biotechnology Final Consultation, or New Protein Consultation (whether the submission is a new submission or an amendment or supplement to a previous submission), regardless of whether the submission is transmitted in paper or electronic format;",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened",
+          "severity": "high",
+          "detail": "answer asserts \"required\" (mandatory); strongest in source is \"should\" (recommended)",
+          "answer_excerpt": "A Table of Contents is required for any submission regarding a GRAS notice, Biotechnol...",
+          "source_excerpt": "D. Table of Contents 10. Should I include a Table of Contents with my regulatory submi..."
+        }
+      ]
+    },
+    {
+      "pair_id": "fda-88114::gold::103",
+      "doc_id": "fda-88114",
+      "question": "What action should an investigator take if a research subject is entered into a study with waived consent but dies before their family can be reached?",
+      "answer": "If feasible, the investigator must provide information regarding the clinical investigation to the subject's legally authorized representative or a family member, which includes a same-sex spouse.",
+      "relevant_source": "If a subject is entered into a clinical investigation with waived consent and the subject dies before a legally authorized representative or family member, which can include a same-sex spouse, can be contacted, information about the clinical investigation is to be provided to the",
+      "severity": "high",
+      "flags": [
+        {
+          "kind": "modal_strengthened_in_context",
+          "severity": "high",
+          "detail": "against the sentence that addresses it, the answer asserts \"must\" (mandatory) where the source says \"can\" (permissive)",
+          "answer_excerpt": "If feasible, the investigator must provide information regarding the clinical investigati...",
+          "source_excerpt": "If a subject is entered into a clinical investigation with waived consent and the subject dies before a legally authorized representative or family member, which can include a same-sex spouse, can be contacted, informati"
+        },
+        {
+          "kind": "actor_not_in_source",
+          "severity": "medium",
+          "detail": "answer places an obligation on \"investigator\", which the cited source never names (source names: irb, subject)",
+          "answer_excerpt": "If feasible, the investigator must provide information regarding the clinical invest...",
+          "source_excerpt": ""
+        }
+      ]
+    }
+  ]
+}

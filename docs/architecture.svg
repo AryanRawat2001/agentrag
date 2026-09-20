@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720"
+     font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <title>agentrag architecture — build, serve, and the evaluation harness that decided it</title>
+  <desc>Three lanes. Build: 160 sha256-pinned PDFs become 13,423 passages and a BM25 index.
+  Serve: a query is retrieved in under 0.2 ms, answered by a model in 12.5 s, then every quote is
+  located in the source in 0.006 ms. Eval: 240 span-grounded queries over 192 configurations
+  decided which retriever ships.</desc>
+
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#58a6ff"/>
+    </marker>
+    <marker id="arrow-dim" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#6b7488"/>
+    </marker>
+    <marker id="arrow-ok" viewBox="0 0 10 10" refX="9" refY="5"
+            markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3fb950"/>
+    </marker>
+    <style>
+      .lane   { fill: #12151d; stroke: #262b38; stroke-width: 1; rx: 12; }
+      .lane-l { fill: #6b7488; font-size: 12px; letter-spacing: 1.4px; font-weight: 700; }
+      .box    { fill: #1a1e28; stroke: #2d3444; stroke-width: 1.5; rx: 9; }
+      .box-hl { fill: #12251a; stroke: #3fb950; stroke-width: 2; rx: 9; }
+      .box-ext{ fill: #1a1e28; stroke: #d29922; stroke-width: 1.5; stroke-dasharray: 5 3; rx: 9; }
+      .t      { fill: #e6e8ee; font-size: 15px; font-weight: 650; }
+      .t-hl   { fill: #3fb950; font-size: 15px; font-weight: 700; }
+      .s      { fill: #9aa3b8; font-size: 12.5px; }
+      .m      { fill: #9aa3b8; font-size: 11.5px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .m-bad  { fill: #f85149; font-size: 11.5px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .m-ok   { fill: #3fb950; font-size: 11.5px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .m-warn { fill: #d29922; font-size: 11.5px;
+                font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+      .flow   { stroke: #58a6ff; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+      .flow-d { stroke: #6b7488; stroke-width: 1.6; fill: none; stroke-dasharray: 5 4;
+                marker-end: url(#arrow-dim); }
+      .flow-o { stroke: #3fb950; stroke-width: 2; fill: none; marker-end: url(#arrow-ok); }
+      .note   { fill: #6b7488; font-size: 11.5px; font-style: italic; }
+    </style>
+  </defs>
+
+  <rect width="1280" height="720" fill="#0f1117"/>
+
+  <text x="40" y="44" fill="#e6e8ee" font-size="23" font-weight="700">agentrag</text>
+  <text x="152" y="44" fill="#6b7488" font-size="14.5">
+    retrieval-augmented answers over public FDA and ClinicalTrials.gov documents
+  </text>
+  <text x="40" y="68" fill="#9aa3b8" font-size="13">
+    Every quote is located in the source before it reaches the reader. Latencies are p50 from
+    <tspan class="m" font-size="12">reports/serving_bench.md</tspan>.
+  </text>
+
+  <!-- ============================ BUILD LANE ============================ -->
+  <rect class="lane" x="32" y="96" width="1216" height="132"/>
+  <text class="lane-l" x="50" y="120">BUILD — ONCE, OFFLINE</text>
+
+  <rect class="box" x="60" y="132" width="168" height="76"/>
+  <text class="t" x="76" y="158">160 PDFs</text>
+  <text class="s" x="76" y="178">fetched, sha256-pinned</text>
+  <text class="m" x="76" y="196">152 indexable</text>
+
+  <path class="flow" d="M 232 170 L 276 170"/>
+
+  <rect class="box" x="280" y="132" width="186" height="76"/>
+  <text class="t" x="296" y="158">extract</text>
+  <text class="s" x="296" y="178">text + page offsets,</text>
+  <text class="s" x="296" y="194">sections, identifiers</text>
+
+  <path class="flow" d="M 470 170 L 514 170"/>
+
+  <rect class="box" x="518" y="132" width="186" height="76"/>
+  <text class="t" x="534" y="158">chunk</text>
+  <text class="s" x="534" y="178">structural, 1,024 chars</text>
+  <text class="m" x="534" y="196">13,423 passages</text>
+
+  <path class="flow" d="M 708 170 L 752 170"/>
+
+  <rect class="box" x="756" y="132" width="186" height="76"/>
+  <text class="t" x="772" y="158">BM25 index</text>
+  <text class="s" x="772" y="178">identifier-aware</text>
+  <text class="s" x="772" y="194">tokenization</text>
+
+  <rect class="box-ext" x="978" y="132" width="242" height="76"/>
+  <text class="t" x="994" y="156">Qdrant <tspan class="m-warn" font-size="11">(measured, not used)</tspan></text>
+  <text class="s" x="994" y="176">~7.4× slower than the matrix</text>
+  <text class="s" x="994" y="192">product it would replace</text>
+
+  <!-- ============================ SERVE LANE ============================ -->
+  <rect class="lane" x="32" y="248" width="1216" height="216"/>
+  <text class="lane-l" x="50" y="272">SERVE — PER REQUEST</text>
+
+  <rect class="box" x="60" y="300" width="132" height="70"/>
+  <text class="t" x="76" y="330">query</text>
+  <text class="s" x="76" y="350">natural language</text>
+
+  <path class="flow" d="M 196 335 L 240 335"/>
+
+  <rect class="box" x="244" y="300" width="186" height="70"/>
+  <text class="t" x="260" y="326">retrieve</text>
+  <text class="s" x="260" y="346">BM25, top k=5</text>
+  <text class="m-ok" x="260" y="364">&lt; 0.2 ms</text>
+
+  <path class="flow" d="M 434 335 L 478 335"/>
+
+  <rect class="box" x="482" y="300" width="196" height="70"/>
+  <text class="t" x="498" y="326">generate</text>
+  <text class="s" x="498" y="346">must quote the passages</text>
+  <text class="m-warn" x="498" y="364">12.5 s — third party</text>
+
+  <path class="flow" d="M 682 335 L 726 335"/>
+
+  <rect class="box-hl" x="730" y="288" width="230" height="94"/>
+  <text class="t-hl" x="746" y="314">VERIFY</text>
+  <text class="s" x="746" y="334">locate every quote</text>
+  <text class="s" x="746" y="350">in the source text</text>
+  <text class="m-ok" x="746" y="370">0.006 ms</text>
+
+  <path class="flow-o" d="M 964 335 L 1008 335"/>
+
+  <rect class="box" x="1012" y="288" width="208" height="94"/>
+  <text class="t" x="1028" y="312">answer + verdicts</text>
+  <text class="m-ok" x="1028" y="332">exact · normalized</text>
+  <text class="m-warn" x="1028" y="350">line_number_ambiguous</text>
+  <text class="m-bad" x="1028" y="368">wrong_chunk · unverified</text>
+
+  <!-- the source text feeds verification, not the model's claim about position -->
+  <path class="flow-d" d="M 337 300 C 337 258, 845 258, 845 284"/>
+  <text class="note" x="392" y="252">the retrieved passages feed the check — not the model's claim about where its quote came from</text>
+
+  <rect x="60" y="398" width="1160" height="48" rx="8" fill="#12251a" stroke="#2d4a35"/>
+  <text x="78" y="418" fill="#e6e8ee" font-size="13.5" font-weight="650">
+    The verifier does not trust returned offsets — it searches.
+  </text>
+  <text x="78" y="437" class="s" font-size="12.5">
+    Provider-independent, and it catches the cases that matter: a real sentence attributed to the
+    wrong passage, or a quote that only matches after digits are stripped.
+  </text>
+
+  <!-- ============================ EVAL LANE ============================ -->
+  <rect class="lane" x="32" y="484" width="1216" height="196"/>
+  <text class="lane-l" x="50" y="508">EVALUATE — BUILT FIRST, AND IT DECIDED THE DESIGN</text>
+
+  <rect class="box" x="60" y="520" width="200" height="86"/>
+  <text class="t" x="76" y="546">240 probe queries</text>
+  <text class="s" x="76" y="566">ground truth is</text>
+  <text class="s" x="76" y="582">character spans,</text>
+  <text class="s" x="76" y="598">not chunk ids</text>
+
+  <path class="flow" d="M 264 563 L 308 563"/>
+
+  <rect class="box" x="312" y="520" width="200" height="86"/>
+  <text class="t" x="328" y="546">192 configurations</text>
+  <text class="s" x="328" y="566">3 chunkings × 16</text>
+  <text class="s" x="328" y="582">retrievers × 4 slices</text>
+
+  <path class="flow" d="M 516 563 L 560 563"/>
+
+  <rect class="box" x="564" y="520" width="240" height="86"/>
+  <text class="t" x="580" y="546">the finding</text>
+  <text class="s" x="580" y="566">dense loses to BM25 by</text>
+  <text class="t-hl" x="580" y="586" font-size="17">43–75×</text>
+  <text class="s" x="648" y="586">on exact identifiers</text>
+
+  <path class="flow-o" d="M 808 563 L 852 563"/>
+
+  <rect class="box-hl" x="856" y="520" width="364" height="86"/>
+  <text class="t-hl" x="872" y="546">so BM25 alone ships</text>
+  <text class="s" x="872" y="566">Naive RRF fusion is worse than sparse alone —</text>
+  <text class="s" x="872" y="584">fusion rewards agreement, so a signal-free</text>
+  <text class="s" x="872" y="600">retriever does not abstain. It votes.</text>
+
+  <text class="note" x="60" y="640">
+    Span-based ground truth is what makes this honest: the same 240 queries stay valid across
+    re-chunking, so every strategy comparison is a measurement rather than a circular one.
+  </text>
+  <text class="note" x="60" y="662">
+    Chunk size, heading handling, fusion method, reranking, refusal threshold and the vector store
+    were each decided by a row in that table — several of them against the received advice.
+  </text>
+</svg>

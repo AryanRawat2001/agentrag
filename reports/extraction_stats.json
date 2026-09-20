@@ -1,0 +1,222 @@
+{
+  "generated_at": "2026-08-18T10:32:45+00:00",
+  "counts": {
+    "extracted": 155,
+    "failed": 0,
+    "with_any_section": 147
+  },
+  "by_source": {
+    "ctgov_protocol": 40,
+    "fda_guidance": 115
+  },
+  "structure_source": {
+    "outline": 88,
+    "heuristic": 59,
+    "none": 8
+  },
+  "sections": {
+    "n": 155,
+    "population": "extracted documents",
+    "min": 0.0,
+    "median": 16.0,
+    "p90": 133.0,
+    "max": 963.0,
+    "total": 7306.0
+  },
+  "chars": {
+    "n": 155,
+    "population": "extracted documents",
+    "min": 694.0,
+    "median": 40816.0,
+    "p90": 187891.0,
+    "max": 801075.0,
+    "total": 11986402.0
+  },
+  "chars_per_page": {
+    "n": 155,
+    "population": "extracted documents",
+    "min": 564.48,
+    "median": 2340.91,
+    "p90": 3043.03,
+    "max": 6951.38,
+    "total": 363744.28
+  },
+  "corpus_chars_per_page": 2584.9475954280783,
+  "identifiers": {
+    "cfr": {
+      "docs_containing": 109,
+      "occurrences": 2587,
+      "distinct_section_level": 521,
+      "distinct_with_subsection": 1098,
+      "by_source": {
+        "ctgov_protocol": {
+          "docs": 18,
+          "of_docs": 40,
+          "occurrences": 56
+        },
+        "fda_guidance": {
+          "docs": 91,
+          "of_docs": 115,
+          "occurrences": 2531
+        }
+      }
+    },
+    "usc": {
+      "docs_containing": 75,
+      "occurrences": 330,
+      "distinct_section_level": 78,
+      "distinct_with_subsection": 174,
+      "by_source": {
+        "ctgov_protocol": {
+          "docs": 2,
+          "of_docs": 40,
+          "occurrences": 4
+        },
+        "fda_guidance": {
+          "docs": 73,
+          "of_docs": 115,
+          "occurrences": 326
+        }
+      }
+    },
+    "fed_register": {
+      "docs_containing": 45,
+      "occurrences": 143,
+      "distinct_section_level": 87,
+      "distinct_with_subsection": 87,
+      "by_source": {
+        "ctgov_protocol": {
+          "docs": 0,
+          "of_docs": 40,
+          "occurrences": 0
+        },
+        "fda_guidance": {
+          "docs": 45,
+          "of_docs": 115,
+          "occurrences": 143
+        }
+      }
+    },
+    "docket": {
+      "docs_containing": 26,
+      "occurrences": 41,
+      "distinct_section_level": 29,
+      "distinct_with_subsection": 29,
+      "by_source": {
+        "ctgov_protocol": {
+          "docs": 0,
+          "of_docs": 40,
+          "occurrences": 0
+        },
+        "fda_guidance": {
+          "docs": 26,
+          "of_docs": 115,
+          "occurrences": 41
+        }
+      }
+    },
+    "registry": {
+      "docs_containing": 20,
+      "occurrences": 56,
+      "distinct_section_level": 40,
+      "distinct_with_subsection": 40,
+      "by_source": {
+        "ctgov_protocol": {
+          "docs": 20,
+          "of_docs": 40,
+          "occurrences": 56
+        },
+        "fda_guidance": {
+          "docs": 0,
+          "of_docs": 115,
+          "occurrences": 0
+        }
+      }
+    },
+    "ich": {
+      "docs_containing": 20,
+      "occurrences": 55,
+      "distinct_section_level": 16,
+      "distinct_with_subsection": 16,
+      "by_source": {
+        "ctgov_protocol": {
+          "docs": 8,
+          "of_docs": 40,
+          "occurrences": 19
+        },
+        "fda_guidance": {
+          "docs": 12,
+          "of_docs": 115,
+          "occurrences": 36
+        }
+      }
+    }
+  },
+  "repaired_identifier_occurrences": 63,
+  "primary_kind": "cfr",
+  "flags": {
+    "docs_with_no_sections": [
+      "ctgov-NCT02545114-Prot_000",
+      "ctgov-NCT02783898-Prot_001",
+      "ctgov-NCT03388437-Prot_SAP_000",
+      "ctgov-NCT03825393-Prot_SAP_000",
+      "ctgov-NCT04486066-Prot_SAP_001",
+      "ctgov-NCT04660552-Prot_003",
+      "fda-71783",
+      "fda-88642"
+    ],
+    "docs_with_suspiciously_dense_sections": [
+      {
+        "doc_id": "fda-70934",
+        "n_sections": 81,
+        "n_chars": 26290,
+        "per_1k": 3.08,
+        "structure_source": "heuristic"
+      },
+      {
+        "doc_id": "fda-175603",
+        "n_sections": 387,
+        "n_chars": 143195,
+        "per_1k": 2.7,
+        "structure_source": "heuristic"
+      },
+      {
+        "doc_id": "fda-72096",
+        "n_sections": 5,
+        "n_chars": 1872,
+        "per_1k": 2.67,
+        "structure_source": "heuristic"
+      },
+      {
+        "doc_id": "fda-75894",
+        "n_sections": 963,
+        "n_chars": 368423,
+        "per_1k": 2.61,
+        "structure_source": "heuristic"
+      },
+      {
+        "doc_id": "fda-75909",
+        "n_sections": 228,
+        "n_chars": 94921,
+        "per_1k": 2.4,
+        "structure_source": "outline"
+      },
+      {
+        "doc_id": "fda-72557",
+        "n_sections": 63,
+        "n_chars": 27043,
+        "per_1k": 2.33,
+        "structure_source": "heuristic"
+      },
+      {
+        "doc_id": "fda-94048",
+        "n_sections": 14,
+        "n_chars": 6326,
+        "per_1k": 2.21,
+        "structure_source": "outline"
+      }
+    ],
+    "docs_with_thin_text_per_page": []
+  },
+  "failures": []
+}

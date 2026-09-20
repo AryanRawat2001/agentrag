@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-09-17T18:19:31+00:00",
+  "conventions": "p50 = interpolated median; p95 = floor-index order statistic at 0.95n (one rank above textbook nearest-rank when 0.95n is integral)",
+  "stages": [
+    {
+      "stage": "retrieve",
+      "source": "measured",
+      "note": "BM25 over 13,423 passages, k=5, 3 passes",
+      "n": 540,
+      "p50_ms": 0.1795,
+      "p95_ms": 0.2795,
+      "min_ms": 0.0888,
+      "max_ms": 0.5625
+    },
+    {
+      "stage": "verify",
+      "source": "measured",
+      "note": "8 real answers, 22 citations replayed, 3 passes",
+      "n": 24,
+      "p50_ms": 0.0062,
+      "p95_ms": 0.2114,
+      "min_ms": 0.0024,
+      "max_ms": 0.2161
+    },
+    {
+      "stage": "generate",
+      "source": "stored",
+      "note": "from reports/generation_eval.json (gemini-3.6-flash); not re-measured, because the free tier is 20 requests per day",
+      "n": 16,
+      "p50_ms": 12534.2146,
+      "p95_ms": 27105.2335,
+      "min_ms": 2158.3703,
+      "max_ms": 27105.2335
+    }
+  ],
+  "verify_by_method": {
+    "exact": {
+      "n_answers": 6,
+      "p50_ms": 0.0049,
+      "max_ms": 0.0134
+    },
+    "normalized": {
+      "n_answers": 2,
+      "p50_ms": 0.1344,
+      "max_ms": 0.2004
+    }
+  },
+  "chunking": "structural",
+  "heading_mode": "prepend",
+  "n_passages": 13423,
+  "n_queries": 180,
+  "repeats": 3,
+  "k": 5,
+  "generate_measured_live": false
+}

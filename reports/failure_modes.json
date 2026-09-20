@@ -1,0 +1,169 @@
+{
+  "identifier_collapse": [
+    {
+      "chunking": "fixed",
+      "sparse": 0.9552777777777777,
+      "dense": 0.012777777777777777,
+      "fused": 0.1627777777777778,
+      "ratio": 74.76086956521739
+    },
+    {
+      "chunking": "semantic",
+      "sparse": 0.9716666666666666,
+      "dense": 0.01722222222222222,
+      "fused": 0.2386111111111111,
+      "ratio": 56.41935483870969
+    },
+    {
+      "chunking": "structural",
+      "sparse": 0.9508333333333333,
+      "dense": 0.02222222222222222,
+      "fused": 0.20194444444444445,
+      "ratio": 42.7875
+    }
+  ],
+  "refusal": {
+    "per_slice": {
+      "exact_identifier": {
+        "n": 4,
+        "refused": 3
+      },
+      "section_lookup": {
+        "n": 4,
+        "refused": 1
+      },
+      "title_lookup": {
+        "n": 4,
+        "refused": 0
+      },
+      "unanswerable": {
+        "n": 4,
+        "refused": 4
+      }
+    },
+    "answerable_n": 12,
+    "answerable_refused": 4,
+    "honest_n": 8,
+    "honest_refused": 1,
+    "refused_queries": [
+      {
+        "query_id": "ident-0000",
+        "slice": "exact_identifier",
+        "query": "What are the requirements of 21 CFR 1.980?"
+      },
+      {
+        "query_id": "ident-0002",
+        "slice": "exact_identifier",
+        "query": "What are the requirements of 21 CFR 890.380?"
+      },
+      {
+        "query_id": "ident-0003",
+        "slice": "exact_identifier",
+        "query": "What are the requirements of 21 CFR 211.196?"
+      },
+      {
+        "query_id": "section-0003",
+        "slice": "section_lookup",
+        "query": "3.7.4 Risk mitigation strategy"
+      }
+    ]
+  },
+  "obligations": {
+    "n_judged": 25,
+    "n_rejected": 8,
+    "rejected": {
+      "ctgov-NCT02942264-Prot_SAP_000::gold::016": {
+        "verdict": "reject",
+        "reason": "source: \"the study treatment SHOULD be discontinued immediately, and the pregnancy reported to the Sponsor no later than 24 hours\". Answer: \"MUST be discontinued\" and \"MUST be reported\". A recommendation restated as a requirement, on a pregnancy safety instruction. The 24-hour figure is right; the obligation level is not."
+      },
+      "ctgov-NCT04125745-Prot_SAP_000::gold::021": {
+        "verdict": "reject",
+        "reason": "source: \"CXA-10 capsules SHOULD be stored refrigerated between 2 and 8C\". Answer: \"MUST be refrigerated\". A storage recommendation restated as a requirement."
+      },
+      "ctgov-NCT04125745-Prot_SAP_000::gold::023": {
+        "verdict": "reject",
+        "reason": "source: \"For safety reasons, we MAY discontinue the study if the first two subjects enrolled experience any unexpected fatal or life-threatening events\". Answer: \"The study WILL be discontinued and halted\". A discretionary safety action restated as a commitment. Caught only by the sentence-level check: the chunk-level comparison mislabelled it as weakened, because the chunk contains required in another clause."
+      },
+      "fda-75426::gold::085": {
+        "verdict": "reject",
+        "reason": "source: \"The question presented for a vote SHOULD have minimal qualifiers, not be leading, and should avoid the use of double or triple negatives.\" Answer: \"MUST contain minimal qualifiers, MUST not be leading\". Two strengthenings in one answer, in advisory-committee guidance where should is explicitly non-binding."
+      },
+      "fda-75426::gold::087": {
+        "verdict": "reject",
+        "reason": "source: \"the names of the committee members and their respective votes SHOULD be read aloud\". Answer: \"MUST be read aloud and entered into the public record.\""
+      },
+      "fda-75426::gold::089": {
+        "verdict": "reject",
+        "reason": "source: \"the Chair SHOULD first check with the DFO or other senior FDA officials\". Answer: \"The Chair MUST verify with the DFO or senior FDA officials.\""
+      },
+      "fda-78268::gold::094": {
+        "verdict": "reject",
+        "reason": "source frames the whole list as advice: \"What special RECOMMENDATIONS apply ... The following RECOMMENDATIONS apply to amendments, updates, and supplements\", and the item itself is \"Begin each filename with the date (YYYY-MM-DD)\". Answer: \"must begin with the date\". Changed from keep to reject at the Phase 8 code-review gate. My original keep was wrong twice over: the recorded reason only checked content (the YYYY-MM-DD form) and never addressed obligation level, and it was inconsistent with ::097 in the same document, which I rejected for exactly this. The detector had steered me there -- `recommend`/`recommendations` were missing from the modal lexicon, so the frame scored 0 and routed to the lenient modal_added_to_unmodalised_source branch at medium severity instead of high."
+      },
+      "fda-78268::gold::097": {
+        "verdict": "reject",
+        "reason": "source: \"You SHOULD include a Table of Contents: - With any submission regarding a GRAS notice...\". Answer: \"A Table of Contents IS REQUIRED for any submission\". The question is leading in the same direction (must always include), so both halves assert an obligation the guidance does not."
+      }
+    },
+    "worst_doc": "fda-75426",
+    "worst_doc_n": 3,
+    "worst_doc_nonbinding": true
+  },
+  "line_numbers": {
+    "n_chunks": 13423,
+    "n_affected": 7141,
+    "share_affected": 0.532,
+    "digits_before": 392163,
+    "digits_after": 305932,
+    "digits_removed": 86231
+  },
+  "citation_buckets": {
+    "exact": 18,
+    "line_number_ambiguous": 0,
+    "normalized": 4,
+    "too_short": 0,
+    "unverified": 0,
+    "wrong_chunk": 0
+  },
+  "faithfulness": {
+    "answer_level_rate": 0.875,
+    "answers_fully_supported": 7,
+    "answers_with_citations": 8,
+    "n_claimed": 22,
+    "n_located": 22,
+    "n_partial": 1,
+    "n_supported": 7,
+    "n_unjudged": 0,
+    "n_unsupported": 0,
+    "supported_of_claimed": null,
+    "supported_of_located": null,
+    "unit": "answer"
+  },
+  "judge": {
+    "positive_rate": 0.875,
+    "negative_rate": 1.0
+  },
+  "generation_n": 16,
+  "curation": {
+    "n_pairs": 159,
+    "n_flagged": 24,
+    "flagged_share": 0.1509,
+    "by_kind": {
+      "actor_not_in_source": 3,
+      "modal_added_to_unmodalised_source": 2,
+      "modal_strengthened": 15,
+      "modal_strengthened_in_context": 15,
+      "polarity_inverted": 2
+    },
+    "by_severity": {
+      "high": 20,
+      "medium": 4,
+      "low": 0
+    },
+    "verdicts_recorded": 25,
+    "verdicts_retired_by_detector_fixes": 1,
+    "orphan_verdicts": [],
+    "flagged_unjudged": 0
+  },
+  "missing_artifacts": []
+}

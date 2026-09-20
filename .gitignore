@@ -1,0 +1,36 @@
+# Downloaded corpus — never committed. Reconstruct with `make corpus`.
+# corpus/manifest.jsonl pins every document by URL + sha256, so the corpus is
+# reproducible without redistributing third-party PDFs.
+data/
+
+# Python
+.coverage
+htmlcov/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Third-party course material kept as a local working reference only.
+# Not ours to redistribute, and a course handout in a portfolio repo reframes
+# the project as coursework. docs/plan.md is the committed plan of record.
+docs/source-guide.md
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/
+
+# /brag working project. The deliverables (brag-output/brag.mp4, brag.jpg, share-copy.txt,
+# and the two markdown files) are ours; `composition/` carries bundled third-party audio
+# from the brag skill — music by ende.app, SFX by Kenney — which is licensed for use in the
+# rendered video, not for redistribution as source files.
+brag-output/composition/

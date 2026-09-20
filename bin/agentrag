@@ -1,0 +1,420 @@
+#!/usr/bin/env bash
+#
+# agentrag — one entry point for the ragpipe stack.
+#
+# Exists because bringing this project up is four things in order (colima, then compose,
+# then a health wait, then knowing which port is which), and getting the order wrong fails
+# in ways that look like the app being broken: a compose command against a stopped VM
+# reports a daemon socket error, and an unhealthy Qdrant looks identical to a Qdrant whose
+# healthcheck shell lacks /dev/tcp.
+#
+# Every subcommand is a thin wrapper over the real tool and prints what it runs, so this
+# never becomes the only way to operate the project.
+
+set -uo pipefail
+
+# --- locate the repo from this script, not from the caller's cwd -----------------------
+# Resolved by walking symlinks by hand: BSD readlink has no portable -f, and this script
+# is expected to be reached through a symlink on PATH.
+_self="${BASH_SOURCE[0]}"
+while [ -L "$_self" ]; do
+  _dir="$(cd -P "$(dirname "$_self")" && pwd)"
+  _self="$(readlink "$_self")"
+  case "$_self" in /*) ;; *) _self="$_dir/$_self" ;; esac
+done
+ROOT="$(cd -P "$(dirname "$_self")/.." && pwd)"
+
+API_PORT="${AGENTRAG_API_PORT:-8000}"
+QDRANT_PORT="${AGENTRAG_QDRANT_PORT:-6333}"
+API_URL="http://127.0.0.1:${API_PORT}"
+QDRANT_URL="http://127.0.0.1:${QDRANT_PORT}"
+CHUNKS="$ROOT/data/chunks/structural.jsonl"
+
+# --- output ---------------------------------------------------------------------------
+if [ -t 1 ] && [ -z "${NO_COLOR:-}" ]; then
+  B=$'\033[1m'; DIM=$'\033[2m'; R=$'\033[0m'
+  GREEN=$'\033[32m'; RED=$'\033[31m'; YEL=$'\033[33m'; CYAN=$'\033[36m'
+else
+  B=''; DIM=''; R=''; GREEN=''; RED=''; YEL=''; CYAN=''
+fi
+
+say()  { printf '%s\n' "$*"; }
+info() { printf '%s==>%s %s\n' "$CYAN" "$R" "$*"; }
+warn() { printf '%s!!%s  %s\n' "$YEL" "$R" "$*" >&2; }
+die()  { printf '%sxx%s  %s\n' "$RED" "$R" "$*" >&2; exit 1; }
+ok()   { printf '  %s●%s %s\n' "$GREEN" "$R" "$*"; }
+bad()  { printf '  %s●%s %s\n' "$RED" "$R" "$*"; }
+meh()  { printf '  %s●%s %s\n' "$YEL" "$R" "$*"; }
+
+# Echo the command before running it. This script should never be the only way to do
+# something; seeing the underlying command is how you learn you do not need it.
+run() { printf '%s$ %s%s\n' "$DIM" "$*" "$R"; "$@"; }
+
+need() { command -v "$1" >/dev/null 2>&1 || die "$1 not found on PATH. Try: agentrag doctor"; }
+
+# --- secrets --------------------------------------------------------------------------
+# compose passes GEMINI_API_KEY through as an environment variable so no key enters an
+# image layer. Sourced from .env.gemini when the environment does not already carry one.
+# Never echoed.
+load_key() {
+  if [ -z "${GEMINI_API_KEY:-}" ] && [ -f "$ROOT/.env.gemini" ]; then
+    GEMINI_API_KEY="$(sed -n 's/^GEMINI_API_KEY=//p' "$ROOT/.env.gemini" | head -1)"
+    export GEMINI_API_KEY
+  fi
+}
+
+api_json() { curl -fsS -m "${2:-5}" "$API_URL$1" 2>/dev/null; }
+
+pretty() {
+  if command -v jq >/dev/null 2>&1; then jq .; else python3 -m json.tool; fi
+}
+
+# --- prerequisites --------------------------------------------------------------------
+colima_running() { colima status >/dev/null 2>&1; }
+
+ensure_colima() {
+  need colima
+  if colima_running; then return 0; fi
+  info "colima is not running — starting the Docker VM (this takes ~30s the first time)"
+  run colima start || die "colima failed to start"
+}
+
+ensure_chunks() {
+  [ -f "$CHUNKS" ] && return 0
+  die "no chunks at data/chunks/structural.jsonl — the API mounts this read-only.
+     Build them first:  make chunk
+     (data/ is gitignored, so a fresh clone has to generate it rather than receive it.)"
+}
+
+# --- commands -------------------------------------------------------------------------
+cmd_help() {
+  cat <<EOF
+${B}agentrag${R} — the ragpipe stack (hybrid retrieval + verified citations)
+${DIM}$ROOT${R}
+
+${B}STACK${R}
+  ${CYAN}agentrag start${R}            start colima if needed, build + run api and qdrant, wait for health
+  ${CYAN}agentrag stop${R}             stop and remove the containers
+  ${CYAN}agentrag stop --all${R}       also stop the colima VM (frees the RAM)
+  ${CYAN}agentrag restart${R}          stop, then start
+  ${CYAN}agentrag status${R}           what is up, what is healthy, and what is stale
+  ${CYAN}agentrag logs [svc]${R}       follow logs (svc: api | qdrant; default both)
+  ${CYAN}agentrag open${R}             open the dashboard in a browser
+
+${B}USE IT${R}
+  ${CYAN}agentrag query "..."${R}      ask a question; add -k N, or --retrieve-only to skip generation
+  ${CYAN}agentrag stats${R}            per-stage p50/p95 and token totals over everything served
+  ${CYAN}agentrag health${R}           readiness, chunk count, and why generation is off if it is
+
+${B}MEASURE${R}
+  ${CYAN}agentrag ann [--builds N]${R} ANN recall vs exact search (needs qdrant; N builds, default 5)
+  ${CYAN}agentrag bench${R}            per-stage latency -> reports/serving_bench.md (no quota spent)
+  ${CYAN}agentrag curate${R}           triage the golden set for obligation/polarity errors
+  ${CYAN}agentrag failures${R}         rebuild the failure analysis from the artifacts
+  ${CYAN}agentrag demo${R}             build docs/demo.mp4 from the live service (spends 1 request)
+  ${CYAN}agentrag test${R}             the full test suite
+  ${CYAN}agentrag lint${R}             ruff check + format --check
+
+${B}WITHOUT DOCKER${R}
+  ${CYAN}agentrag serve${R}            run the API directly on the host (no container)
+
+${B}HELP${R}
+  ${CYAN}agentrag doctor${R}           check prerequisites and diagnose a broken stack
+
+${DIM}api ${API_URL}   qdrant ${QDRANT_URL}
+Override ports with AGENTRAG_API_PORT / AGENTRAG_QDRANT_PORT.${R}
+EOF
+}
+
+cmd_start() {
+  need docker
+  ensure_colima
+  ensure_chunks
+  load_key
+  cd "$ROOT" || die "cannot cd to $ROOT"
+
+  info "starting api + qdrant"
+  # No arrays here on purpose. macOS ships bash 3.2, where `set -u` plus an *empty* array
+  # expansion (`"${build[@]}"` with build=()) is a fatal "unbound variable" -- so the
+  # `--no-build` path died here, silently, before the health wait and the status report.
+  # The `--build` path worked, which is why a first test of `agentrag start` passed.
+  if [ "${1:-}" = "--no-build" ]; then
+    run docker compose up -d || die "docker compose up failed — try: agentrag logs"
+  else
+    run docker compose up -d --build || die "docker compose up failed — try: agentrag logs"
+  fi
+
+  info "waiting for the API to finish loading the index (13k chunks, a few seconds)"
+  local i
+  for i in $(seq 1 60); do
+    if api_json /health 2 >/dev/null; then break; fi
+    sleep 2
+    printf '.'
+  done
+  printf '\n'
+
+  if ! api_json /health 2 >/dev/null; then
+    warn "the API did not answer /health in ~2 minutes. Recent logs:"
+    docker compose logs --tail=25 api
+    die "start incomplete"
+  fi
+  cmd_status
+  say ""
+  say "  Dashboard: ${B}${API_URL}${R}"
+}
+
+cmd_stop() {
+  need docker
+  if ! colima_running; then
+    say "colima is already stopped, so nothing is running."
+    return 0
+  fi
+  cd "$ROOT" || die "cannot cd to $ROOT"
+  info "stopping containers"
+  run docker compose down
+  if [ "${1:-}" = "--all" ]; then
+    info "stopping the colima VM"
+    run colima stop
+  else
+    say "${DIM}colima is still running. 'agentrag stop --all' stops it too.${R}"
+  fi
+}
+
+cmd_status() {
+  say "${B}agentrag status${R}"
+  say ""
+
+  say "${B}Docker VM${R}"
+  if command -v colima >/dev/null 2>&1; then
+    if colima_running; then ok "colima running"; else bad "colima stopped — 'agentrag start' will start it"; fi
+  else
+    bad "colima not installed"
+  fi
+
+  say ""
+  say "${B}Containers${R}"
+  if colima_running && command -v docker >/dev/null 2>&1; then
+    local ps
+    ps="$(cd "$ROOT" && docker compose ps --format '{{.Service}}\t{{.Status}}' 2>/dev/null)"
+    if [ -z "$ps" ]; then
+      meh "none running"
+    else
+      printf '%s\n' "$ps" | while IFS=$'\t' read -r svc st; do
+        case "$st" in
+          *healthy*)   ok  "$svc — $st" ;;
+          *unhealthy*) bad "$svc — $st" ;;
+          Up*)         meh "$svc — $st" ;;
+          *)           bad "$svc — $st" ;;
+        esac
+      done
+    fi
+  else
+    meh "skipped (no Docker VM)"
+  fi
+
+  say ""
+  say "${B}API${R} ${DIM}${API_URL}${R}"
+  local health
+  health="$(api_json /health 3)"
+  if [ -n "$health" ]; then
+    printf '%s' "$health" | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+n = d.get("chunks") or 0
+print("  ● ready={}  {:,} {} chunks  retriever={}".format(
+    d.get("ready"), n, d.get("chunking"), d.get("retriever")))
+if d.get("generator_available"):
+    print("  ● generator {}".format(d.get("generator")))
+else:
+    print("  ● retrieval only")
+    err = d.get("generator_error")
+    if err:
+        print("    why: {}".format(err[:110]))
+' 2>/dev/null || printf '%s\n' "$health"
+  else
+    bad "not answering"
+  fi
+
+  say ""
+  say "${B}Qdrant${R} ${DIM}${QDRANT_URL}${R}"
+  local qv
+  qv="$(curl -fsS -m 3 "$QDRANT_URL/" 2>/dev/null)"
+  if [ -n "$qv" ]; then
+    printf '%s' "$qv" | python3 -c 'import json,sys; print("  ● version", json.load(sys.stdin).get("version"))' 2>/dev/null
+    curl -fsS -m 3 "$QDRANT_URL/collections" 2>/dev/null | python3 -c '
+import json, sys
+cols = json.load(sys.stdin)["result"]["collections"]
+print("  ● collections:", ", ".join(c["name"] for c in cols) if cols else "none (ragpipe ann creates one on demand)")
+' 2>/dev/null
+  else
+    bad "not answering"
+  fi
+
+  say ""
+  say "${B}Inputs and artifacts${R}"
+  if [ -f "$CHUNKS" ]; then
+    ok "chunks $(du -h "$CHUNKS" | cut -f1 | tr -d ' ') at data/chunks/structural.jsonl"
+  else
+    bad "no chunks — run 'make chunk' before starting the API"
+  fi
+  if [ -f "$ROOT/.env.gemini" ] || [ -n "${GEMINI_API_KEY:-}" ]; then
+    ok "Gemini key present (not shown)"
+  else
+    meh "no Gemini key — the API serves retrieval only"
+  fi
+  if [ -f "$ROOT/reports/ann_recall.json" ]; then
+    python3 - "$ROOT/reports/ann_recall.json" <<'PY' 2>/dev/null
+import datetime, json, sys
+p = sys.argv[1]
+d = json.load(open(p))
+import os
+age = (datetime.datetime.now() - datetime.datetime.fromtimestamp(os.path.getmtime(p))).days
+n = d.get("n_builds", "?")
+mark = "●"
+note = "" if isinstance(n, int) and n >= 5 else "  (fewer than 5 builds: a weaker artifact of identical shape)"
+print(f"  {mark} ann_recall.json: {n} builds, {age}d old{note}")
+PY
+  else
+    meh "no reports/ann_recall.json — run 'agentrag ann'"
+  fi
+}
+
+cmd_query() {
+  [ $# -gt 0 ] || die 'usage: agentrag query "your question" [-k N] [--retrieve-only]'
+  local q="" k=5 ro=false
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      -k) k="${2:?-k needs a number}"; shift 2 ;;
+      --retrieve-only|-r) ro=true; shift ;;
+      *) q="${q:+$q }$1"; shift ;;
+    esac
+  done
+  [ -n "$q" ] || die "no question given"
+  api_json /health 3 >/dev/null || die "the API is not answering. Try: agentrag start"
+
+  local body
+  body="$(python3 -c 'import json,sys; print(json.dumps({"query": sys.argv[1], "k": int(sys.argv[2]), "retrieve_only": sys.argv[3] == "true"}))' "$q" "$k" "$ro")"
+
+  # Generation is a network call to a third party and takes seconds, so the timeout is
+  # generous. Retrieval alone is sub-millisecond.
+  curl -fsS -m 180 -X POST "$API_URL/query" -H 'content-type: application/json' -d "$body" \
+    | python3 -c '
+import json, sys
+
+d = json.load(sys.stdin)
+print()
+if d.get("answered"):
+    print(d.get("answer", "").strip())
+else:
+    print("(no answer)", d.get("reason") or d.get("refusal_source") or "")
+
+v = d.get("verification")
+if v:
+    line = "  citations located {}/{}".format(v.get("verified"), v.get("claimed"))
+    if v.get("precision") is not None:
+        line += "  precision {:.2f}".format(v["precision"])
+    line += "  buckets {}".format(v.get("buckets"))
+    print()
+    print(line)
+
+for c in d.get("citations") or []:
+    flag = "OK" if c.get("verified") else "UNVERIFIED"
+    print()
+    print("  [{}] {}  {}  chars {}:{}".format(
+        flag, c.get("method"), c.get("doc_id"), c.get("start"), c.get("end")))
+    nl = chr(10)
+    quote = (c.get("quote") or "").replace(nl, " ")
+    source = (c.get("source_text") or "-- not located --").replace(nl, " ")
+    print("    model : {}".format(quote[:150]))
+    print("    source: {}".format(source[:150]))
+
+retrieved = d.get("retrieved") or []
+if retrieved:
+    print()
+    print("  retrieved:")
+    for r in retrieved:
+        print("    {}. {}  {}  ({})".format(
+            r.get("rank"), r.get("doc_id"), (r.get("section_heading") or "")[:60], r.get("score")))
+
+t = d.get("timings_ms") or {}
+if t:
+    print()
+    print("  timings ms:  " + "   ".join("{}={}".format(k, val) for k, val in t.items()))
+print()
+'
+}
+
+cmd_ann() {
+  need uv
+  ensure_colima
+  cd "$ROOT" || die "cannot cd to $ROOT"
+  curl -fsS -m 3 "$QDRANT_URL/" >/dev/null 2>&1 || {
+    info "qdrant is not up — starting it"
+    run docker compose up -d qdrant
+    local i
+    for i in $(seq 1 30); do curl -fsS -m 2 "$QDRANT_URL/" >/dev/null 2>&1 && break; sleep 2; done
+  }
+  curl -fsS -m 3 "$QDRANT_URL/" >/dev/null 2>&1 || die "qdrant still not answering on $QDRANT_URL"
+  warn "this overwrites reports/ann_recall.{md,json}"
+  run uv run ragpipe ann "$@"
+}
+
+cmd_doctor() {
+  say "${B}agentrag doctor${R}"
+  say ""
+  local t
+  for t in colima docker uv curl python3; do
+    if command -v "$t" >/dev/null 2>&1; then ok "$t  $(command -v "$t")"; else bad "$t missing"; fi
+  done
+  if docker compose version >/dev/null 2>&1; then
+    ok "docker compose  $(docker compose version --short 2>/dev/null || echo present)"
+  else
+    bad "docker compose plugin missing — brew install docker-compose, then:
+       mkdir -p ~/.docker/cli-plugins && ln -sf /opt/homebrew/lib/docker/cli-plugins/docker-compose ~/.docker/cli-plugins/docker-compose"
+  fi
+  [ -f "$ROOT/docker-compose.yml" ] && ok "docker-compose.yml found" || bad "docker-compose.yml missing — is $ROOT the repo?"
+  [ -f "$CHUNKS" ] && ok "chunks present" || bad "chunks missing — run: make chunk"
+  say ""
+  say "${DIM}Port checks${R}"
+  local p holder
+  for p in "$API_PORT" "$QDRANT_PORT"; do
+    holder="$(lsof -nP -iTCP:"$p" -sTCP:LISTEN 2>/dev/null | awk 'NR==2{print $1}')"
+    if [ -n "$holder" ]; then
+      # colima publishes container ports by forwarding them over ssh, so `ssh` holding
+      # the port is the normal healthy case, not something else squatting on it.
+      case "$holder" in
+        ssh|docker*|com.docke*) ok "port $p served by the Docker VM ($holder)" ;;
+        *) meh "port $p held by $holder — not Docker; this will clash with 'agentrag start'" ;;
+      esac
+    else
+      meh "port $p free (nothing listening)"
+    fi
+  done
+}
+
+# --- dispatch -------------------------------------------------------------------------
+cmd="${1:-help}"
+[ $# -gt 0 ] && shift
+
+case "$cmd" in
+  help|-h|--help)  cmd_help ;;
+  start|up)        cmd_start "$@" ;;
+  stop|down)       cmd_stop "$@" ;;
+  restart)         cmd_stop; say ""; cmd_start "$@" ;;
+  status|ps)       cmd_status ;;
+  health)          api_json /health 5 | pretty || die "the API is not answering" ;;
+  stats)           api_json /stats 5 | pretty || die "the API is not answering" ;;
+  logs)            need docker; cd "$ROOT" && run docker compose logs -f --tail=50 "$@" ;;
+  open)            api_json /health 3 >/dev/null || warn "the API is not answering yet"; run open "$API_URL" ;;
+  query|ask|q)     cmd_query "$@" ;;
+  ann)             cmd_ann "$@" ;;
+  bench)           need uv; cd "$ROOT" && run uv run ragpipe bench "$@" ;;
+  curate)          need uv; cd "$ROOT" && run uv run ragpipe curate "$@" ;;
+  failures)        need uv; cd "$ROOT" && run uv run ragpipe failures "$@" ;;
+  serve)           need uv; cd "$ROOT" && load_key && run uv run ragpipe serve "$@" ;;
+  demo)            cd "$ROOT" && run bin/build-demo "$@" ;;
+  test)            need uv; cd "$ROOT" && run uv run pytest tests -q "$@" ;;
+  lint)            need uv; cd "$ROOT" && run uv run ruff check src tests && run uv run ruff format --check src tests ;;
+  doctor)          cmd_doctor ;;
+  *)               warn "unknown command: $cmd"; say ""; cmd_help; exit 2 ;;
+esac

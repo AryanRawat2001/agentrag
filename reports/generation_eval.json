@@ -1,0 +1,674 @@
+{
+  "buckets": {
+    "exact": 18,
+    "line_number_ambiguous": 0,
+    "normalized": 4,
+    "too_short": 0,
+    "unverified": 0,
+    "wrong_chunk": 0
+  },
+  "faithfulness": {
+    "answer_level_rate": 0.875,
+    "answers_fully_supported": 7,
+    "answers_with_citations": 8,
+    "n_claimed": 22,
+    "n_located": 22,
+    "n_partial": 1,
+    "n_supported": 7,
+    "n_unjudged": 0,
+    "n_unsupported": 0,
+    "supported_of_claimed": null,
+    "supported_of_located": null,
+    "unit": "answer"
+  },
+  "generator": "gemini-3.6-flash",
+  "judge": "gemini-3.1-flash-lite",
+  "judge_calibration": {
+    "inspect_golden_set": false,
+    "n_negative": 8,
+    "n_positive": 8,
+    "negative_rate": 1.0,
+    "positive_rate": 0.875,
+    "unjudged": 0,
+    "usable": true,
+    "verdicts": {
+      "partial": 1,
+      "supported": 7,
+      "unsupported": 8
+    }
+  },
+  "judge_unit": "answer",
+  "k": 5,
+  "latency_s": {
+    "p50": 12.534,
+    "p95": 27.105
+  },
+  "mean_citation_precision": 1.0,
+  "n_errors": 0,
+  "n_queries": 16,
+  "n_scored": 16,
+  "outcomes": [
+    {
+      "answer_text": "The provided documents do not contain the requirements of 21 CFR 1.980.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 6.492751499987207,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 104,
+      "prompt_tokens": 1967,
+      "query": "What are the requirements of 21 CFR 1.980?",
+      "query_id": "ident-0000",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "exact_identifier",
+      "thinking_tokens": 0,
+      "top_score": 9.478621482849121
+    },
+    {
+      "answer_text": "Under 21 CFR 211.192, there is a requirement to review drug product production records and investigate any failure or discrepancy.",
+      "attempts": 1,
+      "buckets": {
+        "normalized": 1
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-123664::structural::00028",
+          "matched_text": "requirement to review drug product \nproduction records and investigate any failure or discrepancy under 21 CFR 211.192",
+          "method": "normalized",
+          "quote": "requirement to review drug product production records and investigate any failure or discrepancy under 21 CFR 211.192"
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 2.929083333001472,
+      "n_claimed": 1,
+      "n_verified": 1,
+      "output_tokens": 187,
+      "prompt_tokens": 2083,
+      "query": "What are the requirements of 21 CFR 211.192?",
+      "query_id": "ident-0001",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "exact_identifier",
+      "thinking_tokens": 0,
+      "top_score": 11.616138458251953
+    },
+    {
+      "answer_text": "The provided documents do not contain the specific requirements of 21 CFR 890.380.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 2.7115087090060115,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 124,
+      "prompt_tokens": 1832,
+      "query": "What are the requirements of 21 CFR 890.380?",
+      "query_id": "ident-0002",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "exact_identifier",
+      "thinking_tokens": 0,
+      "top_score": 15.693338394165039
+    },
+    {
+      "answer_text": "The provided documents do not state the specific requirements of 21 CFR 211.196.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 23.340706666000187,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 103,
+      "prompt_tokens": 2132,
+      "query": "What are the requirements of 21 CFR 211.196?",
+      "query_id": "ident-0003",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "exact_identifier",
+      "thinking_tokens": 0,
+      "top_score": 10.536561965942383
+    },
+    {
+      "answer_text": "The text states that there is no tolerance for the pesticide chemical residue and no exemption from the requirement of a tolerance exists under 40 CFR 180 Subpart D.",
+      "attempts": 1,
+      "buckets": {
+        "exact": 1
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-77986::structural::00013",
+          "matched_text": "2. \t There is no tolerance for the pesticide chemical residue and no exemption from the \nrequirement of a tolerance exists (40 CFR 180 Subpart D - Exemptions From \nTolerances).",
+          "method": "exact",
+          "quote": "2. \t There is no tolerance for the pesticide chemical residue and no exemption from the \nrequirement of a tolerance exists (40 CFR 180 Subpart D - Exemptions From \nTolerances)."
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 23.980799000011757,
+      "n_claimed": 1,
+      "n_verified": 1,
+      "output_tokens": 218,
+      "prompt_tokens": 1907,
+      "query": "2 There is no tolerance for the pesticide chemical residue and no exemption from the",
+      "query_id": "section-0000",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "section_lookup",
+      "thinking_tokens": 0,
+      "top_score": 18.976776123046875
+    },
+    {
+      "answer_text": "Under the section 'L. Biologics License Applications', upon submitting an application for approval of a biological drug product via a single biologics license application (BLA) under \u00a7 351(a) of the Public Health Service Act, the applicant is asked to certify that no debarred person was used in connection with the application, which precludes the use of a debarred person regarding both the establishment and the application if truthful.",
+      "attempts": 1,
+      "buckets": {
+        "exact": 2
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-72557::structural::00027",
+          "matched_text": "Upon submission of an application for approval of a biological drug product by the single\nbiologics license application (BLA) (\u00a7 351(a) of the Public Health Service Act), an\napplicant would be asked to certify that no debarred person was used in connection with\nthe application.",
+          "method": "exact",
+          "quote": "Upon submission of an application for approval of a biological drug product by the single\nbiologics license application (BLA) (\u00a7 351(a) of the Public Health Service Act), an\napplicant would be asked to certify that no debarred person was used in connection with\nthe application."
+        },
+        {
+          "chunk_id": "fda-72557::structural::00027",
+          "matched_text": "This certification, if truthful, would preclude the use of a debarred person\nin connection with both the establishment and the application.",
+          "method": "exact",
+          "quote": "This certification, if truthful, would preclude the use of a debarred person\nin connection with both the establishment and the application."
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 12.475152792059816,
+      "n_claimed": 2,
+      "n_verified": 2,
+      "output_tokens": 358,
+      "prompt_tokens": 1485,
+      "query": "L. Biologics License Applications",
+      "query_id": "section-0001",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "section_lookup",
+      "thinking_tokens": 0,
+      "top_score": 10.397820472717285
+    },
+    {
+      "answer_text": "For IVD development in late therapeutic product development, the FDA expects that clinical evidence supporting the IVD companion diagnostic will be generated during the major efficacy trial(s) intended to support approval of the therapeutic product. Consequently, the investigational IVD(s) used in these trials should be completely specified, with analytical validation complete and meeting performance expectations. Sub-topics under this section include \"Training Samples Sets versus Validation Samples Sets\", \"Effect of Changes to the Test Design\", \"IVD Bridging Studies\", and \"Special Protocol Assessments\".",
+      "attempts": 1,
+      "buckets": {
+        "exact": 2
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-99030::structural::00104",
+          "matched_text": "FDA 990\nexpects that clinical evidence to support use of the IVD companion diagnostic will be 991\ngenerated in the major efficacy trial(s) intended to support approval of the therapeutic 992\nproduct.  Therefore, it is important that the investigational IVD(s) used in these trials is 993\ncompletely specified and that analytical validation is complete and meets the therapeutic 994\nproduct sponsor\u2019s expectations for performance.",
+          "method": "exact",
+          "quote": "FDA 990\nexpects that clinical evidence to support use of the IVD companion diagnostic will be 991\ngenerated in the major efficacy trial(s) intended to support approval of the therapeutic 992\nproduct.  Therefore, it is important that the investigational IVD(s) used in these trials is 993\ncompletely specified and that analytical validation is complete and meets the therapeutic 994\nproduct sponsor\u2019s expectations for performance."
+        },
+        {
+          "chunk_id": "fda-99030::structural::00006",
+          "matched_text": "1. Training Samples Sets versus Validation Samples Sets ................................... 2988\n2. Effect of Changes to the Test Design ............................................................... 2989\n3. IVD Bridging Studies ....................................................................................... 3090\n4. Special Protocol Assessments ........................................................................... 3191",
+          "method": "exact",
+          "quote": "1. Training Samples Sets versus Validation Samples Sets ................................... 2988\n2. Effect of Changes to the Test Design ............................................................... 2989\n3. IVD Bridging Studies ....................................................................................... 3090\n4. Special Protocol Assessments ........................................................................... 3191"
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 12.593276332947426,
+      "n_claimed": 2,
+      "n_verified": 2,
+      "output_tokens": 485,
+      "prompt_tokens": 1703,
+      "query": "Considerations for IVD Development in Late Therapeutic Product Development",
+      "query_id": "section-0002",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "section_lookup",
+      "thinking_tokens": 0,
+      "top_score": 17.191322326660156
+    },
+    {
+      "answer_text": "The provided documents do not contain the content for section 3.7.4 Risk mitigation strategy.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 4.860101000056602,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 115,
+      "prompt_tokens": 1685,
+      "query": "3.7.4 Risk mitigation strategy",
+      "query_id": "section-0003",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "section_lookup",
+      "thinking_tokens": 0,
+      "top_score": 7.421900749206543
+    },
+    {
+      "answer_text": "The guidance document \"The Least Burdensome Provisions: Concept and Principles: Guidance for Industry and Food and Drug Administration Staff\" was issued on February 5, 2019 (following a draft issued on December 15, 2017) and supersedes the previous guidance of the same name issued on October 4, 2002. Issued by the FDA's Center for Devices and Radiological Health (CDRH) and Center for Biologics Evaluation and Research (CBER), it represents the current thinking of the FDA, is nonbinding, and does not establish any legal rights. The document provides principles and examples regarding applications of least burdensome principles to medical device regulation, such as balancing premarket and postmarket information needs, using alternative approaches, and streamlining processes.",
+      "attempts": 1,
+      "buckets": {
+        "exact": 2,
+        "normalized": 3
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-73188::structural::00000",
+          "matched_text": "Document issued on February 5, 2019.",
+          "method": "exact",
+          "quote": "Document issued on February 5, 2019."
+        },
+        {
+          "chunk_id": "fda-73188::structural::00000",
+          "matched_text": "The draft of this document was issued on December 15, 2017.",
+          "method": "exact",
+          "quote": "The draft of this document was issued on December 15, 2017."
+        },
+        {
+          "chunk_id": "fda-73188::structural::00000",
+          "matched_text": "This document supersedes \u201cThe Least Burdensome Provisions of the FDA \nModernization Act of 1997: Concept and Principles,\u201d issued on October 4, \n2002.",
+          "method": "normalized",
+          "quote": "This document supersedes \u201cThe Least Burdensome Provisions of the FDA Modernization Act of 1997: Concept and Principles,\u201d issued on October 4, 2002."
+        },
+        {
+          "chunk_id": "fda-73188::structural::00005",
+          "matched_text": "This guidance represents the current thinking of the Food and Drug Administration (FDA or \nAgency) on this topic.  It does not establish any rights for any person and is not binding on \nFDA or the public.",
+          "method": "normalized",
+          "quote": "This guidance represents the current thinking of the Food and Drug Administration (FDA or Agency) on this topic. It does not establish any rights for any person and is not binding on FDA or the public."
+        },
+        {
+          "chunk_id": "fda-73188::structural::00023",
+          "matched_text": "This section provides examples intended to represent the least burdensome concept and \nimplementation of least burdensome guiding principles as applied to medical device regulation.",
+          "method": "normalized",
+          "quote": "This section provides examples intended to represent the least burdensome concept and implementation of least burdensome guiding principles as applied to medical device regulation."
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 27.105233457987197,
+      "n_claimed": 5,
+      "n_verified": 5,
+      "output_tokens": 587,
+      "prompt_tokens": 1842,
+      "query": "The Least Burdensome Provisions: Concept and Principles:  Guidance for Industry and FDA Staff",
+      "query_id": "title-0000",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "title_lookup",
+      "thinking_tokens": 0,
+      "top_score": 19.850814819335938
+    },
+    {
+      "answer_text": "The guidance document titled \"Considerations for Allogeneic Pancreatic Islet Cell Products\" was issued by the U.S. Department of Health and Human Services, Food and Drug Administration, Center for Biologics Evaluation and Research (CBER) in September 2009. This guidance represents the FDA's current thinking on the topic and nonbinding recommendations; it does not create or confer rights or bind the FDA or the public. According to the document, although modified allogeneic islet cell products are beyond its scope, manufacturing changes resulting in significant modifications\u2014such as encapsulation\u2014may require additional preclinical safety and proof-of-concept studies in animal models.",
+      "attempts": 1,
+      "buckets": {
+        "exact": 6
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-77497::structural::00000",
+          "matched_text": "Considerations for Allogeneic \nPancreatic Islet Cell Products",
+          "method": "exact",
+          "quote": "Considerations for Allogeneic \nPancreatic Islet Cell Products"
+        },
+        {
+          "chunk_id": "fda-77497::structural::00000",
+          "matched_text": "U.S. Department of Health and Human Services \nFood and Drug Administration \nCenter for Biologics Evaluation and Research \nSeptember 2009",
+          "method": "exact",
+          "quote": "U.S. Department of Health and Human Services \nFood and Drug Administration \nCenter for Biologics Evaluation and Research \nSeptember 2009"
+        },
+        {
+          "chunk_id": "fda-77497::structural::00004",
+          "matched_text": "This guidance represents the Food and Drug Administration\u2019s (FDA\u2019s) current thinking on this \ntopic.  It does not create or confer any rights for or on any person and does not operate to bind \nFDA or the public.",
+          "method": "exact",
+          "quote": "This guidance represents the Food and Drug Administration\u2019s (FDA\u2019s) current thinking on this \ntopic.  It does not create or confer any rights for or on any person and does not operate to bind \nFDA or the public."
+        },
+        {
+          "chunk_id": "fda-77497::structural::00021",
+          "matched_text": "Although recommendations regarding the manufacturing, preclinical, and clinical studies \nfor modified allogeneic islet cell products are beyond the scope of this guidance, a \nmanufacturing change that results in a significant modification of the product \ncharacteristics should lead to the consideration of the need for additional preclinical \nstudies.",
+          "method": "exact",
+          "quote": "Although recommendations regarding the manufacturing, preclinical, and clinical studies \nfor modified allogeneic islet cell products are beyond the scope of this guidance, a \nmanufacturing change that results in a significant modification of the product \ncharacteristics should lead to the consideration of the need for additional preclinical \nstudies."
+        },
+        {
+          "chunk_id": "fda-77497::structural::00021",
+          "matched_text": "Encapsulation of allogeneic islets provides a useful example of a modification \nfor which additional preclinical studies may be needed.",
+          "method": "exact",
+          "quote": "Encapsulation of allogeneic islets provides a useful example of a modification \nfor which additional preclinical studies may be needed."
+        },
+        {
+          "chunk_id": "fda-77497::structural::00021",
+          "matched_text": "You should also consider \u201cproof of concept\u201d studies to \ndemonstrate that the encapsulated islets are able to function in an animal model of disease \nfor a sufficient duration to suggest that the risk of clinical administration of the product is \nlikely to be outweighed by the potential clinical benefit.",
+          "method": "exact",
+          "quote": "You should also consider \u201cproof of concept\u201d studies to \ndemonstrate that the encapsulated islets are able to function in an animal model of disease \nfor a sufficient duration to suggest that the risk of clinical administration of the product is \nlikely to be outweighed by the potential clinical benefit."
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 15.098419917048886,
+      "n_claimed": 6,
+      "n_verified": 6,
+      "output_tokens": 708,
+      "prompt_tokens": 1705,
+      "query": "Considerations for Allogeneic Pancreatic Islet Cell Products:  Guidance for Industry",
+      "query_id": "title-0001",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "title_lookup",
+      "thinking_tokens": 0,
+      "top_score": 15.311748504638672
+    },
+    {
+      "answer_text": "The project \"Best Assessment of Sore Throat and Antibiotic prescribing\" (BASTA) aims to investigate whether altering patient flow away from medical practitioners can lower unnecessary antibiotic prescribing for patients whose primary complaint is a sore throat. Its primary objective is to determine if managing uncomplicated acute sore throat according to prevailing guidelines differs depending on whether the initial assessment is conducted by a medical practitioner, a trained nurse, or a trained pharmacist.",
+      "attempts": 1,
+      "buckets": {
+        "exact": 3
+      },
+      "checks": [
+        {
+          "chunk_id": "ctgov-NCT06114706-Prot_SAP_000::structural::00000",
+          "matched_text": "Best Assessment of Sore Throat and Antibiotic \nprescribing (BASTA)",
+          "method": "exact",
+          "quote": "Best Assessment of Sore Throat and Antibiotic \nprescribing (BASTA)"
+        },
+        {
+          "chunk_id": "ctgov-NCT06114706-Prot_SAP_000::structural::00000",
+          "matched_text": "This project aims to investigate if an organisational change of patient \nflow away from medical practitioners can reduce unnecessary antibiotic \nprescribing in patients attending with a sore throat as the main \ncomplaint.",
+          "method": "exact",
+          "quote": "This project aims to investigate if an organisational change of patient \nflow away from medical practitioners can reduce unnecessary antibiotic \nprescribing in patients attending with a sore throat as the main \ncomplaint."
+        },
+        {
+          "chunk_id": "ctgov-NCT06114706-Prot_SAP_000::structural::00000",
+          "matched_text": "Will the proportion of patients attending for an uncomplicated acute \nsore throat being managed according to prevailing guidelines differ if the \ninitial assessment is made by a medical practitioner, a trained nurse or a \ntrained pharmacist?",
+          "method": "exact",
+          "quote": "Will the proportion of patients attending for an uncomplicated acute \nsore throat being managed according to prevailing guidelines differ if the \ninitial assessment is made by a medical practitioner, a trained nurse or a \ntrained pharmacist?"
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 7.8005631669657305,
+      "n_claimed": 3,
+      "n_verified": 3,
+      "output_tokens": 391,
+      "prompt_tokens": 1954,
+      "query": "Best Assessment of Sore Throat and Antibiotic Prescribing",
+      "query_id": "title-0002",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "title_lookup",
+      "thinking_tokens": 0,
+      "top_score": 18.31293487548828
+    },
+    {
+      "answer_text": "\"Expedited Programs for Regenerative Medicine Therapies for Serious Conditions\" is a draft guidance for industry that provides recommendations on the expedited development and review of regenerative medicine therapies for serious or life-threatening diseases or conditions, including provisions added by the 21st Century Cures Act under section 506(g) of the FD&C Act regarding Regenerative Medicine Advanced Therapy (RMAT) designation.",
+      "attempts": 1,
+      "buckets": {
+        "exact": 2
+      },
+      "checks": [
+        {
+          "chunk_id": "fda-188874::structural::00002",
+          "matched_text": "Expedited Programs for Regenerative  1 \nMedicine Therapies for Serious Conditions 2 \n 3 \n 4 \nDraft Guidance for Industry",
+          "method": "exact",
+          "quote": "Expedited Programs for Regenerative  1 \nMedicine Therapies for Serious Conditions 2 \n 3 \n 4 \nDraft Guidance for Industry"
+        },
+        {
+          "chunk_id": "fda-188874::structural::00004",
+          "matched_text": "This guidance provides sponsors engaged in the development of regenerative medicine therapies 17 \nfor serious or life-threatening diseases or conditions\n1 with our recommendations on the expedited 18 \ndevelopment and review of these therapies, including as provided under section 506(g) of the 19 \nFederal Food, Drug, and Cosmetic Act (FD&C Act), as added by section 3033 of the 21st 20 \nCentury Cures Act (Cures Act).",
+          "method": "exact",
+          "quote": "This guidance provides sponsors engaged in the development of regenerative medicine therapies 17 \nfor serious or life-threatening diseases or conditions\n1 with our recommendations on the expedited 18 \ndevelopment and review of these therapies, including as provided under section 506(g) of the 19 \nFederal Food, Drug, and Cosmetic Act (FD&C Act), as added by section 3033 of the 21st 20 \nCentury Cures Act (Cures Act)."
+        }
+      ],
+      "citation_precision": 1.0,
+      "error": null,
+      "latency_s": 17.603970624972135,
+      "n_claimed": 2,
+      "n_verified": 2,
+      "output_tokens": 412,
+      "prompt_tokens": 1898,
+      "query": "Expedited Programs for Regenerative Medicine Therapies for Serious Conditions: Draft Guidance for Industry",
+      "query_id": "title-0003",
+      "refusal_source": null,
+      "refused": false,
+      "slice_name": "title_lookup",
+      "thinking_tokens": 0,
+      "top_score": 19.53199005126953
+    },
+    {
+      "answer_text": "The provided documents do not contain information regarding the requirements of 40 CFR 953.17.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 2.1583702920470387,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 74,
+      "prompt_tokens": 2023,
+      "query": "What are the requirements of 40 CFR 953.17?",
+      "query_id": "unans-0000",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "unanswerable",
+      "thinking_tokens": 0,
+      "top_score": 5.414690017700195
+    },
+    {
+      "answer_text": "The provided documents do not address the requirements of 7 CFR 1609.61.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 22.91679445898626,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 85,
+      "prompt_tokens": 1939,
+      "query": "What are the requirements of 7 CFR 1609.61?",
+      "query_id": "unans-0001",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "unanswerable",
+      "thinking_tokens": 0,
+      "top_score": 5.352264404296875
+    },
+    {
+      "answer_text": "The provided documents do not address the requirements of 7 CFR 1892.80.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 19.46623058395926,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 132,
+      "prompt_tokens": 1800,
+      "query": "What are the requirements of 7 CFR 1892.80?",
+      "query_id": "unans-0002",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "unanswerable",
+      "thinking_tokens": 0,
+      "top_score": 6.0944623947143555
+    },
+    {
+      "answer_text": "The provided documents do not address the requirements of 16 CFR 1465.9.",
+      "attempts": 1,
+      "buckets": {},
+      "checks": [],
+      "citation_precision": null,
+      "error": null,
+      "latency_s": 3.4342089999699965,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "output_tokens": 132,
+      "prompt_tokens": 1856,
+      "query": "What are the requirements of 16 CFR 1465.9?",
+      "query_id": "unans-0003",
+      "refusal_source": "model",
+      "refused": true,
+      "slice_name": "unanswerable",
+      "thinking_tokens": 0,
+      "top_score": 6.564671039581299
+    }
+  ],
+  "refusal": {
+    "answerable_all": 0.3333333333333333,
+    "answerable_excl_mention_labelled": 0.125,
+    "mention_labelled_slices": [
+      "exact_identifier"
+    ],
+    "unanswerable": 1.0
+  },
+  "retriever": "bm25",
+  "separability_auc": 1.0,
+  "separability_auc_identifier_only": 1.0,
+  "separability_pairs": 48,
+  "separability_pairs_identifier_only": 16,
+  "slices": {
+    "exact_identifier": {
+      "mean_citation_precision": 1.0,
+      "mention_labelled": true,
+      "n": 4,
+      "n_claimed": 1,
+      "n_verified": 1,
+      "refusal_rate": 0.75
+    },
+    "section_lookup": {
+      "mean_citation_precision": 1.0,
+      "mention_labelled": false,
+      "n": 4,
+      "n_claimed": 5,
+      "n_verified": 5,
+      "refusal_rate": 0.25
+    },
+    "title_lookup": {
+      "mean_citation_precision": 1.0,
+      "mention_labelled": false,
+      "n": 4,
+      "n_claimed": 16,
+      "n_verified": 16,
+      "refusal_rate": 0.0
+    },
+    "unanswerable": {
+      "mean_citation_precision": null,
+      "mention_labelled": false,
+      "n": 4,
+      "n_claimed": 0,
+      "n_verified": 0,
+      "refusal_rate": 1.0
+    }
+  },
+  "threshold_sweep": [
+    {
+      "answerable_gated": 0,
+      "answerable_total": 12,
+      "threshold": 5.3523,
+      "unanswerable_gated": 0,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 0,
+      "answerable_total": 12,
+      "threshold": 6.5605,
+      "unanswerable_gated": 3,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 1,
+      "answerable_total": 12,
+      "threshold": 7.7687,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 1,
+      "answerable_total": 12,
+      "threshold": 8.9769,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 2,
+      "answerable_total": 12,
+      "threshold": 10.1851,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 4,
+      "answerable_total": 12,
+      "threshold": 11.3933,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 5,
+      "answerable_total": 12,
+      "threshold": 12.6015,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 5,
+      "answerable_total": 12,
+      "threshold": 13.8098,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 5,
+      "answerable_total": 12,
+      "threshold": 15.018,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 7,
+      "answerable_total": 12,
+      "threshold": 16.2262,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 8,
+      "answerable_total": 12,
+      "threshold": 17.4344,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 9,
+      "answerable_total": 12,
+      "threshold": 18.6426,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    },
+    {
+      "answerable_gated": 11,
+      "answerable_total": 12,
+      "threshold": 19.8508,
+      "unanswerable_gated": 4,
+      "unanswerable_total": 4
+    }
+  ],
+  "tokens": {
+    "output": 4215,
+    "prompt": 29811,
+    "thinking": 0
+  }
+}

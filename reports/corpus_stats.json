@@ -1,0 +1,218 @@
+{
+  "generated_at": "2026-08-13T11:05:56+00:00",
+  "counts": {
+    "in_manifest": 160,
+    "downloaded_ok": 160,
+    "download_failed": 0,
+    "not_yet_fetched": 0,
+    "indexable": 155,
+    "pinned_sha256": 160
+  },
+  "by_source": {
+    "ctgov_protocol": 40,
+    "fda_guidance": 120
+  },
+  "text_layer": {
+    "digital_native": 154,
+    "image_only": 5,
+    "mixed": 1
+  },
+  "pages": {
+    "n": 155,
+    "population": "indexable only",
+    "min": 1,
+    "median": 17,
+    "p90": 79,
+    "max": 222,
+    "total": 4637
+  },
+  "chars": {
+    "n": 155,
+    "population": "indexable only",
+    "min": 694,
+    "median": 40784,
+    "p90": 187735,
+    "max": 800633,
+    "total": 11977438
+  },
+  "bytes": {
+    "n": 155,
+    "population": "indexable only",
+    "min": 9567,
+    "median": 308430,
+    "p90": 1171442,
+    "max": 33023673,
+    "total": 138457036
+  },
+  "downloaded_footprint_bytes": 139827547,
+  "estimated_tokens": 2994359,
+  "estimated_chunks": {
+    "256_tok": 13760,
+    "512_tok": 6880,
+    "1024_tok": 3440
+  },
+  "partial_scans": {
+    "indexable_docs_with_blank_pages": 18,
+    "labelled_mixed": 1,
+    "labelled_digital_native": 17,
+    "blank_pages_total": 40
+  },
+  "slices": {
+    "draft_final_pairs_complete": 8,
+    "fda_docs_with_docket_metadata": 93,
+    "fda_docs_with_docket_in_text": 26,
+    "fda_docket_tokens_in_text": 41,
+    "protocols_with_registry_metadata": 40,
+    "protocols_with_registry_id_in_text": 20,
+    "registry_tokens_in_text": 56,
+    "docs_with_table_like_lines": 64,
+    "table_like_lines_total": 528,
+    "undated_docs": 3
+  },
+  "acl_partition": {
+    "Center for Drug Evaluation and Research": 22,
+    "Office of Inspections and Investigations": 15,
+    "Center for Biologics Evaluation and Research": 15,
+    "Center for Veterinary Medicine": 13,
+    "Human Foods Program": 12,
+    "Center for Devices and Radiological Health": 11,
+    "Office of the Commissioner": 10,
+    "Center for Tobacco Products": 10,
+    "INDUSTRY": 7,
+    "Office of Regulatory Affairs": 7,
+    "NETWORK": 6,
+    "NIH": 6,
+    "OTHER": 6,
+    "OTHER_GOV": 6,
+    "FED": 5,
+    "INDIV": 4
+  },
+  "status": {
+    "n/a": 40,
+    "Final": 74,
+    "Draft": 46
+  },
+  "era": {
+    "2020s": 60,
+    "2010s": 54,
+    "2000s": 24,
+    "1990s": 16,
+    "undated": 4,
+    "1980s": 1,
+    "1970s": 1
+  },
+  "sample_reason": {
+    "stratified_sponsor_class": 38,
+    "largest_available_document": 2,
+    "stratified_center_status_era": 104,
+    "draft_final_pair": 16
+  },
+  "data_quality": {
+    "fda_docs_with_unusable_issue_date": 4,
+    "fda_docs_with_multiple_offices": 50,
+    "fda_docs_without_docket": 24,
+    "pdfs_that_failed_to_open": 0,
+    "pdfs_opened_but_negligible_text": 5,
+    "docs_missing_sha256_pin": 0
+  },
+  "most_table_heavy": [
+    {
+      "doc_id": "ctgov-NCT03801915-Prot_SAP_000",
+      "table_like_lines": 102,
+      "pages": 114,
+      "title": "Perioperative MVT-5873, a Fully Human Monoclonal Antibody Against a CA 19-9 Epit"
+    },
+    {
+      "doc_id": "ctgov-NCT03386721-Prot_SAP_000",
+      "table_like_lines": 93,
+      "pages": 222,
+      "title": "Basket Study to Evaluate the Therapeutic Activity of Simlukafusp Alfa as a Combi"
+    },
+    {
+      "doc_id": "ctgov-NCT00567567-Prot_SAP_000",
+      "table_like_lines": 45,
+      "pages": 197,
+      "title": "Comparing Two Different Myeloablation Therapies in Treating Young Patients Who A"
+    },
+    {
+      "doc_id": "ctgov-NCT02114684-Prot_000",
+      "table_like_lines": 37,
+      "pages": 58,
+      "title": "Improving Retreatment Success (IMPRESS)"
+    },
+    {
+      "doc_id": "ctgov-NCT04469686-Prot_SAP_000",
+      "table_like_lines": 21,
+      "pages": 21,
+      "title": "Phase 3 Study to Evaluate the Safety and Efficacy of Hydrocortisone Acetate Supp"
+    },
+    {
+      "doc_id": "ctgov-NCT04125745-Prot_SAP_000",
+      "table_like_lines": 20,
+      "pages": 56,
+      "title": "Oral CXA-10 in Pulmonary Arterial Hypertension"
+    },
+    {
+      "doc_id": "ctgov-NCT01749540-Prot_000",
+      "table_like_lines": 18,
+      "pages": 67,
+      "title": "Study to Evaluate the Safety and Efficacy of Luspatercept (ACE-536) in Participa"
+    },
+    {
+      "doc_id": "ctgov-NCT02669758-Prot_000",
+      "table_like_lines": 18,
+      "pages": 93,
+      "title": "A Long-Term Safety and Tolerability Study of ALKS 3831 in Adults With Schizophre"
+    },
+    {
+      "doc_id": "ctgov-NCT01511614-Prot_SAP_000",
+      "table_like_lines": 16,
+      "pages": 221,
+      "title": "Nicotine Withdrawal Symptoms and Smoking Relapse"
+    },
+    {
+      "doc_id": "ctgov-NCT04202133-Prot_000",
+      "table_like_lines": 13,
+      "pages": 31,
+      "title": "Neurocognitive Benefits of a Weight Management Program"
+    }
+  ],
+  "failures": [],
+  "quarantined": [
+    {
+      "doc_id": "fda-70844",
+      "text_layer": "image_only",
+      "pages": 8,
+      "text_chars": 709,
+      "title": "Industry-Supported Scientific and Educational Activites"
+    },
+    {
+      "doc_id": "fda-71910",
+      "text_layer": "image_only",
+      "pages": 2,
+      "text_chars": 0,
+      "title": "FDA Animal Products Database Data Entry Form"
+    },
+    {
+      "doc_id": "fda-72423",
+      "text_layer": "image_only",
+      "pages": 4,
+      "text_chars": 0,
+      "title": "General Guidelines for OTC Combination Products"
+    },
+    {
+      "doc_id": "fda-75334",
+      "text_layer": "image_only",
+      "pages": 8,
+      "text_chars": 709,
+      "title": "Industry Supported Scientific and Educational Activities:  Guidance fo"
+    },
+    {
+      "doc_id": "fda-75456",
+      "text_layer": "image_only",
+      "pages": 1,
+      "text_chars": 0,
+      "title": "Sample WHO Certificate for Quality of a Pharmaceutical Product"
+    }
+  ]
+}

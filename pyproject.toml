@@ -1,0 +1,61 @@
+[project]
+name = "ragpipe"
+version = "0.1.0"
+description = "Hybrid-search RAG with verified citations over public regulatory documentation"
+requires-python = ">=3.11"
+# Core: everything the serving path and the sparse baseline need, and nothing else.
+#
+# Split into extras for a measured reason rather than tidiness. The full dependency set
+# is 973 MB installed, 516 MB of which is torch, and the served API never touches it:
+# `serve` runs BM25 plus the citation verifier, both pure Python and numpy. Keeping the
+# heavy half optional takes the container from ~1 GB to a fraction of it. The imports
+# were already lazy, so this only makes the packaging honest about what runs where.
+dependencies = [
+    "httpx>=0.27",
+    "pypdf>=4.2",
+    # Sparse retrieval. `bm25s` over a hand-rolled implementation deliberately: a
+    # subtly wrong BM25 would corrupt every number in the ablation table while
+    # looking entirely plausible, which is the exact failure mode this project's
+    # verification process exists to catch. Use a tested one for the baseline.
+    "bm25s>=0.2",
+    "numpy>=1.26",
+    # bm25s builds its index as a sparse matrix. It degrades without scipy rather than
+    # failing to import, which would silently change the baseline every number rests on.
+    "scipy>=1.11",
+    "fastapi>=0.141.1",
+    "uvicorn[standard]>=0.52.4",
+]
+
+[project.optional-dependencies]
+dev = ["ruff>=0.5", "pytest>=8.0"]
+# Dense retrieval, cross-encoder reranking, and semantic chunking. Pulls torch.
+embed = ["sentence-transformers>=3.0"]
+# Phase 7's ANN measurement only. The served API does not query Qdrant -- see
+# reports/ann_recall.md for why not.
+vectorstore = ["qdrant-client>=1.19.0"]
+# The abandoned Phase 5 Bedrock path, kept installable so the record is reproducible.
+bedrock = ["anthropic[bedrock]>=0.122.0"]
+
+[project.scripts]
+ragpipe = "ragpipe.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/ragpipe"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.ruff.lint.per-file-ignores]
+# dashboard.py is a single HTML/CSS/JS document held in a Python string. Wrapping CSS
+# rules and HTML attributes to 100 columns to satisfy a Python line-length rule would
+# make the markup harder to read to satisfy a convention that does not apply to it.
+# Every other rule still applies to the file's Python.
+"src/ragpipe/dashboard.py" = ["E501"]

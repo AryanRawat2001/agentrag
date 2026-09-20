@@ -1,0 +1,232 @@
+{
+  "inspect_golden_set": false,
+  "items": [
+    {
+      "claim": "The protocol is a research plan developed by the Children's Oncology Group to investigate study questions and should not be used to direct the practice of medicine or provide individualized medical care.",
+      "control": "positive",
+      "item_id": "pos::ctgov-NCT00567567-Prot_SAP_000::gold::000",
+      "quote": "THIS PROTOCOL IS THE RESEARCH PLAN DEVELOPED BY THE CHILDREN \u2019S ONCOLOGY GROUP TO INVESTIGATE A PARTICULAR STUDY QUESTION OR SET OF STUDY QUESTIONS AND SHOULD NOT BE USED TO DIRECT THE PRACTICE OF MEDICINE BY ANY PERSON OR TO PROVIDE INDIVIDUALIZED MEDICAL CARE , TREATMENT , OR ADVICE TO ANY PATIENT OR STUDY SUBJECT .",
+      "reason": "The quote explicitly states that the protocol is a research plan developed by the Children's Oncology Group and should not be used to direct medical practice or provide individualized care.",
+      "source_id": "ctgov-NCT00567567-Prot_SAP_000::gold::000",
+      "verdict": "supported"
+    },
+    {
+      "claim": "During the first week, participants take one 0.5mg pill daily for the first three days, followed by two 0.5mg pills daily (one in the morning and one in the evening) for days 4 through 7.",
+      "control": "positive",
+      "item_id": "pos::ctgov-NCT01511614-Prot_SAP_000::gold::000",
+      "quote": "Days 1 to 3: Take 1 x 0.5mg pill each day in the morning. Days 4 to 7: Take 2 x 0.5mg pills each day. Take one in the morning and one in the evening.",
+      "reason": "The quote provides the exact dosage and timing schedule described in the claim.",
+      "source_id": "ctgov-NCT01511614-Prot_SAP_000::gold::000",
+      "verdict": "supported"
+    },
+    {
+      "claim": "The white fluffy ring (white blood cells) should be collected and placed into a sterile 50 mL tube with 20 mL of PBS. It is then spun for 10 minutes at 25\u00baC and 750 g. After removing the supernatant, 1 mL of PBS is added to the pellet and it is spun again for 5 minutes at 4\u00b0C at 10000rpm before the final supernatant is removed.",
+      "control": "positive",
+      "item_id": "pos::ctgov-NCT02717455-Prot_SAP_000::gold::010",
+      "quote": "Place this fraction of white blood cells into a fresh 50 mL sterile tube with 20 mL of PBS. Spin down for 10 minutes @ 25\u00baC, 750 g in fast mode. Remove the supernatant. Add back to pellet 1 mL of PBS and spin for 5 min. at 4\u00b0C at 10000rpm. Remove supernatant.",
+      "reason": "The quote details the exact steps for collecting and spinning the white blood cells as described in the claim.",
+      "source_id": "ctgov-NCT02717455-Prot_SAP_000::gold::010",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Patients who received bevacizumab for symptom management, such as cerebral edema or pseudo progression, can be included in the study.",
+      "control": "positive",
+      "item_id": "pos::ctgov-NCT02942264-Prot_SAP_000::gold::011",
+      "quote": "Patients who received bevacizumab for symptom management, including but not limited to cerebral edema, pseudo progression can be included in the study.",
+      "reason": "The quote directly confirms that patients who received bevacizumab for symptom management, including cerebral edema and pseudo progression, can be included in the study.",
+      "source_id": "ctgov-NCT02942264-Prot_SAP_000::gold::011",
+      "verdict": "supported"
+    },
+    {
+      "claim": "PAH is defined by a mean pulmonary artery pressure (mPAP) greater than 25 mmHg at rest, accompanied by normal left ventricular filling pressures, provided other conditions like chronic obstructive pulmonary disease are absent.",
+      "control": "positive",
+      "item_id": "pos::ctgov-NCT04125745-Prot_SAP_000::gold::020",
+      "quote": "It is defined by an increase in the mean pulmonary artery pressure (mPAP) > 25 mmHg at rest and normal left ventricular filling pressures",
+      "reason": "The quote defines PAH based on mPAP and left ventricular filling pressures but does not mention the exclusion of other conditions like chronic obstructive pulmonary disease.",
+      "source_id": "ctgov-NCT04125745-Prot_SAP_000::gold::020",
+      "verdict": "partial"
+    },
+    {
+      "claim": "The study targets male and female participants between 2 years and 6 years of age (inclusive).",
+      "control": "positive",
+      "item_id": "pos::ctgov-NCT04660552-Prot_003::gold::020",
+      "quote": "1. Male or female participants between 2 years and 6 years of age (inclusive), of all races.",
+      "reason": "The quote directly states the inclusion criteria for male or female participants between 2 and 6 years of age.",
+      "source_id": "ctgov-NCT04660552-Prot_003::gold::020",
+      "verdict": "supported"
+    },
+    {
+      "claim": "A manufacturer or processor must disclose in accompanying documents that the food is \"not processed to control [identified hazard]\" in accordance with trade practice.",
+      "control": "positive",
+      "item_id": "pos::fda-100907::gold::022",
+      "quote": "disclose, in documents accompanying the food, in accordance with the practice of the trade, that the food is \u201cnot processed to control [identified hazard]\u201d",
+      "reason": "The quote explicitly states the requirement to disclose that food is not processed to control an identified hazard in accordance with trade practice.",
+      "source_id": "fda-100907::gold::022",
+      "verdict": "supported"
+    },
+    {
+      "claim": "A supplier is the establishment that manufactures/processes the animal food, raises the animal, or grows the food provided to a receiving facility without further manufacturing/processing by another establishment, except for minor activities such as adding labeling.",
+      "control": "positive",
+      "item_id": "pos::fda-113923::gold::030",
+      "quote": "Part 507 defines a \u201csupplier\u201d as the establishment that manufactures/processes the animal food, raises the animal, or grows the food that is provided to a receiving facility without further manufacturing/processing by another establishment, except for further manufacturing/processing that consists solely of the addition of labeling or similar activity of a de minimis nature.",
+      "reason": "The quote provides the definition of a supplier and includes the exception for de minimis activities like labeling, which matches the claim.",
+      "source_id": "fda-113923::gold::030",
+      "verdict": "supported"
+    },
+    {
+      "claim": "The protocol is a research plan developed by the Children's Oncology Group to investigate study questions and should not be used to direct the practice of medicine or provide individualized medical care.",
+      "control": "negative",
+      "item_id": "neg::ctgov-NCT00567567-Prot_SAP_000::gold::000",
+      "quote": "Days 1 to 3: Take 1 x 0.5mg pill each day in the morning. Days 4 to 7: Take 2 x 0.5mg pills each day. Take one in the morning and one in the evening.",
+      "reason": "The quote describes a medication dosage schedule and does not mention the Children's Oncology Group or the purpose of the protocol.",
+      "source_id": "ctgov-NCT00567567-Prot_SAP_000::gold::000|ctgov-NCT01511614-Prot_SAP_000::gold::000",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "During the first week, participants take one 0.5mg pill daily for the first three days, followed by two 0.5mg pills daily (one in the morning and one in the evening) for days 4 through 7.",
+      "control": "negative",
+      "item_id": "neg::ctgov-NCT01511614-Prot_SAP_000::gold::000",
+      "quote": "Place this fraction of white blood cells into a fresh 50 mL sterile tube with 20 mL of PBS. Spin down for 10 minutes @ 25\u00baC, 750 g in fast mode. Remove the supernatant. Add back to pellet 1 mL of PBS and spin for 5 min. at 4\u00b0C at 10000rpm. Remove supernatant.",
+      "reason": "The quote describes laboratory procedures for processing white blood cells and does not mention medication dosage.",
+      "source_id": "ctgov-NCT01511614-Prot_SAP_000::gold::000|ctgov-NCT02717455-Prot_SAP_000::gold::010",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "The white fluffy ring (white blood cells) should be collected and placed into a sterile 50 mL tube with 20 mL of PBS. It is then spun for 10 minutes at 25\u00baC and 750 g. After removing the supernatant, 1 mL of PBS is added to the pellet and it is spun again for 5 minutes at 4\u00b0C at 10000rpm before the final supernatant is removed.",
+      "control": "negative",
+      "item_id": "neg::ctgov-NCT02717455-Prot_SAP_000::gold::010",
+      "quote": "Patients who received bevacizumab for symptom management, including but not limited to cerebral edema, pseudo progression can be included in the study.",
+      "reason": "The quote discusses patient eligibility criteria regarding bevacizumab and does not describe the laboratory procedure for processing white blood cells.",
+      "source_id": "ctgov-NCT02717455-Prot_SAP_000::gold::010|ctgov-NCT02942264-Prot_SAP_000::gold::011",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "Patients who received bevacizumab for symptom management, such as cerebral edema or pseudo progression, can be included in the study.",
+      "control": "negative",
+      "item_id": "neg::ctgov-NCT02942264-Prot_SAP_000::gold::011",
+      "quote": "It is defined by an increase in the mean pulmonary artery pressure (mPAP) > 25 mmHg at rest and normal left ventricular filling pressures",
+      "reason": "The quote discusses pulmonary artery pressure and does not mention bevacizumab or patient inclusion criteria.",
+      "source_id": "ctgov-NCT02942264-Prot_SAP_000::gold::011|ctgov-NCT04125745-Prot_SAP_000::gold::020",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "PAH is defined by a mean pulmonary artery pressure (mPAP) greater than 25 mmHg at rest, accompanied by normal left ventricular filling pressures, provided other conditions like chronic obstructive pulmonary disease are absent.",
+      "control": "negative",
+      "item_id": "neg::ctgov-NCT04125745-Prot_SAP_000::gold::020",
+      "quote": "1. Male or female participants between 2 years and 6 years of age (inclusive), of all races.",
+      "reason": "The quote describes age and gender eligibility criteria and does not define PAH.",
+      "source_id": "ctgov-NCT04125745-Prot_SAP_000::gold::020|ctgov-NCT04660552-Prot_003::gold::020",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "The study targets male and female participants between 2 years and 6 years of age (inclusive).",
+      "control": "negative",
+      "item_id": "neg::ctgov-NCT04660552-Prot_003::gold::020",
+      "quote": "disclose, in documents accompanying the food, in accordance with the practice of the trade, that the food is \u201cnot processed to control [identified hazard]\u201d",
+      "reason": "The quote discusses food processing disclosures and contains no information regarding the age or gender of study participants.",
+      "source_id": "ctgov-NCT04660552-Prot_003::gold::020|fda-100907::gold::022",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "A manufacturer or processor must disclose in accompanying documents that the food is \"not processed to control [identified hazard]\" in accordance with trade practice.",
+      "control": "negative",
+      "item_id": "neg::fda-100907::gold::022",
+      "quote": "Part 507 defines a \u201csupplier\u201d as the establishment that manufactures/processes the animal food, raises the animal, or grows the food that is provided to a receiving facility without further manufacturing/processing by another establishment, except for further manufacturing/processing that consists solely of the addition of labeling or similar activity of a de minimis nature.",
+      "reason": "The quote defines the term supplier and does not mention the requirement to disclose information about food processing.",
+      "source_id": "fda-100907::gold::022|fda-113923::gold::030",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "A supplier is the establishment that manufactures/processes the animal food, raises the animal, or grows the food provided to a receiving facility without further manufacturing/processing by another establishment, except for minor activities such as adding labeling.",
+      "control": "negative",
+      "item_id": "neg::fda-113923::gold::030",
+      "quote": "large volume parenterals (LVPs or large volume injections) are aqueous solutions usually supplied in volumes of 100 ml to 5,000 ml.",
+      "reason": "The quote defines large volume parenterals and does not mention the definition of a supplier.",
+      "source_id": "fda-113923::gold::030|fda-121169::gold::030",
+      "verdict": "unsupported"
+    },
+    {
+      "claim": "Under 21 CFR 211.192, there is a requirement to review drug product production records and investigate any failure or discrepancy.",
+      "control": null,
+      "item_id": "ident-0001",
+      "quote": "(1) requirement to review drug product \nproduction records and investigate any failure or discrepancy under 21 CFR 211.192",
+      "reason": "The quote directly confirms the requirement to review production records and investigate discrepancies under 21 CFR 211.192.",
+      "source_id": "ident-0001",
+      "verdict": "supported"
+    },
+    {
+      "claim": "The text states that there is no tolerance for the pesticide chemical residue and no exemption from the requirement of a tolerance exists under 40 CFR 180 Subpart D.",
+      "control": null,
+      "item_id": "section-0000",
+      "quote": "(1) 2. \t There is no tolerance for the pesticide chemical residue and no exemption from the \nrequirement of a tolerance exists (40 CFR 180 Subpart D - Exemptions From \nTolerances).",
+      "reason": "The quote confirms that there is no tolerance and no exemption from the requirement of a tolerance under 40 CFR 180 Subpart D.",
+      "source_id": "section-0000",
+      "verdict": "supported"
+    },
+    {
+      "claim": "Under the section 'L. Biologics License Applications', upon submitting an application for approval of a biological drug product via a single biologics license application (BLA) under \u00a7 351(a) of the Public Health Service Act, the applicant is asked to certify that no debarred person was used in connection with the application, which precludes the use of a debarred person regarding both the establi",
+      "control": null,
+      "item_id": "section-0001",
+      "quote": "(1) Upon submission of an application for approval of a biological drug product by the single\nbiologics license application (BLA) (\u00a7 351(a) of the Public Health Service Act), an\napplicant would be asked to certify that no debarred person was used in connection with\nthe application.\n(2) This certification, if truthful, would preclude the use of a debarred person\nin connection with both the establis",
+      "reason": "The quote explicitly states that the certification, if truthful, precludes the use of a debarred person in connection with both the establishment and the application.",
+      "source_id": "section-0001",
+      "verdict": "supported"
+    },
+    {
+      "claim": "For IVD development in late therapeutic product development, the FDA expects that clinical evidence supporting the IVD companion diagnostic will be generated during the major efficacy trial(s) intended to support approval of the therapeutic product. Consequently, the investigational IVD(s) used in these trials should be completely specified, with analytical validation complete and meeting performa",
+      "control": null,
+      "item_id": "section-0002",
+      "quote": "(1) FDA 990\nexpects that clinical evidence to support use of the IVD companion diagnostic will be 991\ngenerated in the major efficacy trial(s) intended to support approval of the therapeutic 992\nproduct.  Therefore, it is important that the investigational IVD(s) used in these trials is 993\ncompletely specified and that analytical validation is complete and meets the therapeutic 994\nproduct sponso",
+      "reason": "The quote confirms the FDA's expectations for clinical evidence and IVD specification, and lists the four sub-topics mentioned in the claim.",
+      "source_id": "section-0002",
+      "verdict": "supported"
+    },
+    {
+      "claim": "The guidance document \"The Least Burdensome Provisions: Concept and Principles: Guidance for Industry and Food and Drug Administration Staff\" was issued on February 5, 2019 (following a draft issued on December 15, 2017) and supersedes the previous guidance of the same name issued on October 4, 2002. Issued by the FDA's Center for Devices and Radiological Health (CDRH) and Center for Biologics Eva",
+      "control": null,
+      "item_id": "title-0000",
+      "quote": "(1) Document issued on February 5, 2019.\n(2) The draft of this document was issued on December 15, 2017.\n(3) This document supersedes \u201cThe Least Burdensome Provisions of the FDA \nModernization Act of 1997: Concept and Principles,\u201d issued on October 4, \n2002.\n(4) This guidance represents the current thinking of the Food and Drug Administration (FDA or \nAgency) on this topic.  It does not establish ",
+      "reason": "The quote does not mention that the document was issued by CDRH and CBER, nor does it explicitly mention balancing premarket and postmarket information needs or streamlining processes.",
+      "source_id": "title-0000",
+      "verdict": "partial"
+    },
+    {
+      "claim": "The guidance document titled \"Considerations for Allogeneic Pancreatic Islet Cell Products\" was issued by the U.S. Department of Health and Human Services, Food and Drug Administration, Center for Biologics Evaluation and Research (CBER) in September 2009. This guidance represents the FDA's current thinking on the topic and nonbinding recommendations; it does not create or confer rights or bind th",
+      "control": null,
+      "item_id": "title-0001",
+      "quote": "(1) Considerations for Allogeneic \nPancreatic Islet Cell Products\n(2) U.S. Department of Health and Human Services \nFood and Drug Administration \nCenter for Biologics Evaluation and Research \nSeptember 2009\n(3) This guidance represents the Food and Drug Administration\u2019s (FDA\u2019s) current thinking on this \ntopic.  It does not create or confer any rights for or on any person and does not operate to bi",
+      "reason": "The quote confirms the document title, issuing agency, date, nonbinding nature, and the recommendation for additional preclinical studies for significant modifications like encapsulation.",
+      "source_id": "title-0001",
+      "verdict": "supported"
+    },
+    {
+      "claim": "The project \"Best Assessment of Sore Throat and Antibiotic prescribing\" (BASTA) aims to investigate whether altering patient flow away from medical practitioners can lower unnecessary antibiotic prescribing for patients whose primary complaint is a sore throat. Its primary objective is to determine if managing uncomplicated acute sore throat according to prevailing guidelines differs depending on ",
+      "control": null,
+      "item_id": "title-0002",
+      "quote": "(1) Best Assessment of Sore Throat and Antibiotic \nprescribing (BASTA)\n(2) This project aims to investigate if an organisational change of patient \nflow away from medical practitioners can reduce unnecessary antibiotic \nprescribing in patients attending with a sore throat as the main \ncomplaint.\n(3) Will the proportion of patients attending for an uncomplicated acute \nsore throat being managed acc",
+      "reason": "The quote confirms the project name, its aim to investigate patient flow changes to reduce antibiotic prescribing, and the primary objective regarding assessment by different types of practitioners.",
+      "source_id": "title-0002",
+      "verdict": "supported"
+    },
+    {
+      "claim": "\"Expedited Programs for Regenerative Medicine Therapies for Serious Conditions\" is a draft guidance for industry that provides recommendations on the expedited development and review of regenerative medicine therapies for serious or life-threatening diseases or conditions, including provisions added by the 21st Century Cures Act under section 506(g) of the FD&C Act regarding Regenerative Medicine ",
+      "control": null,
+      "item_id": "title-0003",
+      "quote": "(1) Expedited Programs for Regenerative  1 \nMedicine Therapies for Serious Conditions 2 \n 3 \n 4 \nDraft Guidance for Industry\n(2) This guidance provides sponsors engaged in the development of regenerative medicine therapies 17 \nfor serious or life-threatening diseases or conditions\n1 with our recommendations on the expedited 18 \ndevelopment and review of these therapies, including as provided under",
+      "reason": "The quote confirms the document title, its purpose regarding expedited development of regenerative medicine therapies, and the inclusion of provisions from the 21st Century Cures Act.",
+      "source_id": "title-0003",
+      "verdict": "supported"
+    }
+  ],
+  "n_negative": 8,
+  "n_positive": 8,
+  "negative_rate": 1.0,
+  "positive_rate": 0.875,
+  "unjudged": 0,
+  "usable": true,
+  "verdicts": {
+    "partial": 1,
+    "supported": 7,
+    "unsupported": 8
+  }
+}

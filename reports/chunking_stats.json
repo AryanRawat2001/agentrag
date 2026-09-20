@@ -1,0 +1,307 @@
+{
+  "generated_at": "2026-08-18T10:42:33+00:00",
+  "strategies": [
+    {
+      "strategy": "fixed",
+      "n_chunks": 11527,
+      "n_documents": 152,
+      "sizes_chars": {
+        "n": 11527,
+        "min": 201.0,
+        "median": 1091.0,
+        "p90": 1216.0,
+        "max": 1274.0,
+        "total": 12690396.0
+      },
+      "index_chars": 12690396,
+      "index_tokens": 3172599,
+      "source_text_tokens": 3172599,
+      "heading_overhead_tokens": 0,
+      "unique_corpus_chars": 10950021,
+      "unique_corpus_tokens": 2737505,
+      "overlap_inflation": 0.15893805135168226,
+      "chunks_per_document": {
+        "n": 152,
+        "min": 1.0,
+        "median": 41.0,
+        "p90": 176.0,
+        "max": 717.0,
+        "total": 11527.0
+      },
+      "section_labelled": 0,
+      "section_exact_boundaries": 0,
+      "section_one_boundary": 0,
+      "section_interior_window": 0,
+      "structural_fallback_documents": 0,
+      "chunks_with_primary_identifier": 1370,
+      "chunks_with_any_identifier": 1709,
+      "distinct_primary_reachable": 520,
+      "duplicates": {
+        "chunks_marked_duplicate": 19,
+        "clusters": 19,
+        "cross_document_clusters": 4,
+        "within_document_clusters": 15,
+        "largest_clusters": [
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00148",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.865,
+            "preview": " (Section 7.1.2)    Refer to Protocol Section 7.0 for  complete list of observations and  ..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00448",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.924,
+            "preview": " low number of  white blood cells can  make it easier to get  infections  o a low number o..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00456",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.942,
+            "preview": "if the subject or his/her guardian requests the release of  information in writing, the Ce..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00458",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.989,
+            "preview": "NVITED TO TAKE PART IN THIS STUDY?    This is a clinical trial, a type of research study. ..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00460",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.886,
+            "preview": "32  Page 153  and surgery are used to kill and remove as much tumor as possible.  Blood st..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00493",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.941,
+            "preview": "ing neuroblastoma than treatments we have used in the past. Unfortunately, there  is no gu..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00494",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 1.0,
+            "preview": " government, which will help us protect the privac y of our research subjects. Information..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::fixed::00517",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.853,
+            "preview": "ocument which are in bold type in their entirety.) Editorial  changes to these sections ma..."
+          }
+        ]
+      }
+    },
+    {
+      "strategy": "semantic",
+      "n_chunks": 11468,
+      "n_documents": 152,
+      "sizes_chars": {
+        "n": 11468,
+        "min": 200.0,
+        "median": 1056.0,
+        "p90": 1196.0,
+        "max": 1461.0,
+        "total": 10950021.0
+      },
+      "index_chars": 10950021,
+      "index_tokens": 2737505,
+      "source_text_tokens": 2737505,
+      "heading_overhead_tokens": 0,
+      "unique_corpus_chars": 10950021,
+      "unique_corpus_tokens": 2737505,
+      "overlap_inflation": 0.0,
+      "chunks_per_document": {
+        "n": 152,
+        "min": 2.0,
+        "median": 40.5,
+        "p90": 179.0,
+        "max": 614.0,
+        "total": 11468.0
+      },
+      "section_labelled": 0,
+      "section_exact_boundaries": 0,
+      "section_one_boundary": 0,
+      "section_interior_window": 0,
+      "structural_fallback_documents": 0,
+      "chunks_with_primary_identifier": 1222,
+      "chunks_with_any_identifier": 1526,
+      "distinct_primary_reachable": 520,
+      "duplicates": {
+        "chunks_marked_duplicate": 76,
+        "clusters": 67,
+        "cross_document_clusters": 24,
+        "within_document_clusters": 43,
+        "largest_clusters": [
+          {
+            "canonical_id": "ctgov-NCT03504644-Prot_SAP_001::semantic::00114",
+            "size": 5,
+            "n_documents": 3,
+            "similarity_floor": 0.667,
+            "preview": "Important Medical Events (IME) that may not result in death, be life threatening, or requi..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::semantic::00409",
+            "size": 3,
+            "n_documents": 1,
+            "similarity_floor": 0.878,
+            "preview": "Pediatr Blood  Cancer 46(7):719-22, 2006  ANBL0532  Page 131    SAMPLE INFORMED CONSENT / ..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::semantic::00441",
+            "size": 3,
+            "n_documents": 1,
+            "similarity_floor": 1.0,
+            "preview": "Your doctor will still take care of you.    We will tell you about new information that ma..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::semantic::00442",
+            "size": 3,
+            "n_documents": 1,
+            "similarity_floor": 0.9,
+            "preview": "WHOM DO I CALL IF I HAVE QUESTIONS OR PROBLEMS?    For questions about the study or a rese..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::semantic::00444",
+            "size": 3,
+            "n_documents": 1,
+            "similarity_floor": 1.0,
+            "preview": "This web site will not include information that can identify you. At most, the web site  w..."
+          },
+          {
+            "canonical_id": "ctgov-NCT02717455-Prot_SAP_000::semantic::00234",
+            "size": 3,
+            "n_documents": 1,
+            "similarity_floor": 0.884,
+            "preview": "Each dose of panobinostat should be taken with a 4 oz / 120 ml glass of water .  Drug must..."
+          },
+          {
+            "canonical_id": "fda-79873::semantic::00008",
+            "size": 3,
+            "n_documents": 3,
+            "similarity_floor": 1.0,
+            "preview": "FDA’s guidance documents, including this guidance, do not establish legally enforceable  r..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::semantic::00132",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 1.0,
+            "preview": "Patients < 12 months of age: 0.017  mg/kg/dose once daily x 3 doses  Patients > 12 months ..."
+          }
+        ]
+      }
+    },
+    {
+      "strategy": "structural",
+      "n_chunks": 13423,
+      "n_documents": 152,
+      "sizes_chars": {
+        "n": 13423,
+        "min": 200.0,
+        "median": 1040.0,
+        "p90": 1191.0,
+        "max": 1314.0,
+        "total": 12201408.0
+      },
+      "index_chars": 12772741,
+      "index_tokens": 3193185,
+      "source_text_tokens": 3050352,
+      "heading_overhead_tokens": 142833,
+      "unique_corpus_chars": 10950021,
+      "unique_corpus_tokens": 2737505,
+      "overlap_inflation": 0.11428169863783832,
+      "chunks_per_document": {
+        "n": 152,
+        "min": 1.0,
+        "median": 46.0,
+        "p90": 234.0,
+        "max": 765.0,
+        "total": 13423.0
+      },
+      "section_labelled": 12720,
+      "section_exact_boundaries": 3013,
+      "section_one_boundary": 4213,
+      "section_interior_window": 5494,
+      "structural_fallback_documents": 8,
+      "chunks_with_primary_identifier": 1358,
+      "chunks_with_any_identifier": 1701,
+      "distinct_primary_reachable": 520,
+      "duplicates": {
+        "chunks_marked_duplicate": 52,
+        "clusters": 51,
+        "cross_document_clusters": 23,
+        "within_document_clusters": 28,
+        "largest_clusters": [
+          {
+            "canonical_id": "fda-159510::structural::00003",
+            "size": 3,
+            "n_documents": 3,
+            "similarity_floor": 0.789,
+            "preview": "Renal Cell Carcinoma: Developing Drugs and Biologics for  Adjuvant Treatment   Guidance fo..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00148",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.865,
+            "preview": " (Section 7.1.2)    Refer to Protocol Section 7.0 for  complete list of observations and  ..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00457",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.924,
+            "preview": " low number of  white blood cells can  make it easier to get  infections  o a low number o..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00465",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.942,
+            "preview": "if the subject or his/her guardian requests the release of  information in writing, the Ce..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00466",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 1.0,
+            "preview": "ocument which are in bold type in their entirety.) Editorial  changes to these sections ma..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00468",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 1.0,
+            "preview": "this one.    You are being asked to take part in this study because you have high risk neu..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00494",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.917,
+            "preview": "uring therapy, please ask your doctor. If you  become pregnant during the research study, ..."
+          },
+          {
+            "canonical_id": "ctgov-NCT00567567-Prot_SAP_000::structural::00502",
+            "size": 2,
+            "n_documents": 1,
+            "similarity_floor": 0.941,
+            "preview": "ing neuroblastoma than treatments we have used in the past. Unfortunately, there  is no gu..."
+          }
+        ]
+      }
+    }
+  ],
+  "deferred_strategies": {},
+  "primary_identifier": "cfr"
+}

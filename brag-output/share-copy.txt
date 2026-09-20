@@ -1,0 +1,7 @@
+Most RAG demos show you an answer. agentrag shows you where every quote came from — and
+flags the ones it can't find. 152 public FDA and ClinicalTrials.gov documents, 13,423
+passages, every citation located in the source before you see it. When the documents don't
+cover something, it refuses instead of guessing.
+
+The finding I didn't expect: on exact identifiers, dense embedding retrieval loses to plain
+keyword search by 43–75×, depending on how the documents are split.

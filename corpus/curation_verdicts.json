@@ -1,0 +1,117 @@
+{
+  "note": "Human curation verdicts on golden pairs flagged by `ragpipe curate`. This is the one artifact in this project that cannot be regenerated, only redone: every report here is rebuilt by re-running a command, but a judgement about whether an answer misstates a regulation is a person reading the source. Phase 6 shipped a faithfulness figure that was not re-derivable because the verdicts behind it were never written down; this file exists so that cannot recur, and so a later reader can disagree with a specific call rather than with the set as a whole.",
+  "judged_on": "2026-09-17",
+  "judged_by": "human review against the cited source text",
+  "criterion": "Does the answer assert an obligation level, polarity, actor or quantity its cited source does not support? Rejected on any misstatement of obligation level in binding text, or in FDA guidance where should is explicitly non-binding. Kept where the source obliges without a modal (imperative, specification, or enumerated statutory duty), where a clinical protocol will is directive, or where the flag was a detector false positive -- in which case the cause is recorded so the detector can be improved rather than the pair blamed.",
+  "verdicts": {
+    "ctgov-NCT00567567-Prot_SAP_000::gold::002": {
+      "verdict": "keep",
+      "reason": "source: \"All patients WILL have a double lumen central venous line placed prior to beginning induction chemotherapy.\" In a protocol, will states what the protocol mandates, so must is a fair reading and the content is exact."
+    },
+    "ctgov-NCT00567567-Prot_SAP_000::gold::005": {
+      "verdict": "keep",
+      "reason": "source is imperative: \"Ship via Federal Express Prior Overnight\". An imperative obliges; the flagged will and may belong to other clauses. Address and delivery window are correct."
+    },
+    "ctgov-NCT01511614-Prot_SAP_000::gold::004": {
+      "verdict": "keep",
+      "reason": "source describes task mechanics (\"respond with a button press when they notice three odd or three even numbers\"). The answer must press is framing, and the task content -- three consecutive odd or even digits -- is exact."
+    },
+    "ctgov-NCT02717455-Prot_SAP_000::gold::016": {
+      "verdict": "keep",
+      "reason": "source is a bare specification: \"Axial T2 FLAIR images (slice thickness 5 mm skip 0 mm, 20 cm FOV)\". Every figure matches, and protocol-specified imaging parameters are requirements."
+    },
+    "ctgov-NCT02717455-Prot_SAP_000::gold::017": {
+      "verdict": "keep",
+      "reason": "A Complete Response REQUIRES the total disappearance of all evaluable tumor is definitional, not a duty owed by the patient. The attribution check reads a definition as an obligation."
+    },
+    "ctgov-NCT02942264-Prot_SAP_000::gold::012": {
+      "verdict": "keep",
+      "reason": "protocol will be obtained -> must be obtained; tissue-block dimensions (5 mm x 5 mm) and stated purpose are exact."
+    },
+    "ctgov-NCT02942264-Prot_SAP_000::gold::016": {
+      "verdict": "reject",
+      "reason": "source: \"the study treatment SHOULD be discontinued immediately, and the pregnancy reported to the Sponsor no later than 24 hours\". Answer: \"MUST be discontinued\" and \"MUST be reported\". A recommendation restated as a requirement, on a pregnancy safety instruction. The 24-hour figure is right; the obligation level is not."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::021": {
+      "verdict": "reject",
+      "reason": "source: \"CXA-10 capsules SHOULD be stored refrigerated between 2 and 8C\". Answer: \"MUST be refrigerated\". A storage recommendation restated as a requirement."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::023": {
+      "verdict": "reject",
+      "reason": "source: \"For safety reasons, we MAY discontinue the study if the first two subjects enrolled experience any unexpected fatal or life-threatening events\". Answer: \"The study WILL be discontinued and halted\". A discretionary safety action restated as a commitment. Caught only by the sentence-level check: the chunk-level comparison mislabelled it as weakened, because the chunk contains required in another clause."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::025": {
+      "verdict": "keep",
+      "reason": "the protocol commits: \"The FDA WILL be notified by telephone or facsimile ... no later than 7 calendar days\". The answer says must be notified within 7 calendar days -- same commitment, same deadline."
+    },
+    "ctgov-NCT04125745-Prot_SAP_000::gold::027": {
+      "verdict": "keep",
+      "reason": "the disputed claim is verbatim in the source: \"A high fat meal MUST be avoided.\" The sentence-level check selected the wrong sentence because the first clause of the answer dominated the overlap score, and the polarity flag compared should across two unrelated clauses."
+    },
+    "ctgov-NCT04660552-Prot_003::gold::024": {
+      "verdict": "keep",
+      "reason": "source: \"then the child WILL HAVE TO BE withdrawn from the study\". Will have to be is an obligation, so must be withdrawn is correct; the lexicon ranks the bare will and cannot see the periphrastic form."
+    },
+    "fda-100907::gold::025": {
+      "verdict": "keep",
+      "reason": "the 180-day comment window and should be submitted both match the guidance; the selected sentence was the you can comment at any time aside rather than the deadline clause."
+    },
+    "fda-113923::gold::033": {
+      "verdict": "keep",
+      "reason": "source is 21 CFR 507.175(c)(7), a binding regulation enumerating required audit documentation (i)-(vi). Must include is correct; the regulation carries the obligation in its heading rather than in each item."
+    },
+    "fda-136987::gold::044": {
+      "verdict": "keep",
+      "reason": "the answer hedges correctly -- MAY BE REQUIRED more frequently if indicated, against a source reading usually on a monthly basis but more frequently when indicated. The flag fires on required inside a permissive phrase, which a max-strength rule cannot see past."
+    },
+    "fda-136987::gold::049": {
+      "verdict": "keep",
+      "reason": "source is imperative (\"If applicable, provide the labeling, a list of ingredients and the Safety Data Sheet\"). The answer uses should, which is weaker than the imperative and exactly right for non-binding guidance."
+    },
+    "fda-171592::gold::053": {
+      "verdict": "keep",
+      "reason": "source enumerates statutory duties under section 582(g)(1)(F): \"(5) Have systems and processes in place to accept saleable returns...\". The guidance is non-binding but the enumerated items restate the statute, which obliges."
+    },
+    "fda-171592::gold::058": {
+      "verdict": "keep",
+      "reason": "same document and pattern as ::053 -- an enumerated statutory duty, restated."
+    },
+    "fda-72414::gold::089": {
+      "verdict": "keep",
+      "reason": "the source states the duty in the passive (\"A notice of the paragraph IV certification MUST be provided to each owner\"), so it names no actor and the applicant -- who does provide it -- looks novel. Passive voice defeats the attribution check."
+    },
+    "fda-75426::gold::085": {
+      "verdict": "reject",
+      "reason": "source: \"The question presented for a vote SHOULD have minimal qualifiers, not be leading, and should avoid the use of double or triple negatives.\" Answer: \"MUST contain minimal qualifiers, MUST not be leading\". Two strengthenings in one answer, in advisory-committee guidance where should is explicitly non-binding."
+    },
+    "fda-75426::gold::087": {
+      "verdict": "reject",
+      "reason": "source: \"the names of the committee members and their respective votes SHOULD be read aloud\". Answer: \"MUST be read aloud and entered into the public record.\""
+    },
+    "fda-75426::gold::089": {
+      "verdict": "reject",
+      "reason": "source: \"the Chair SHOULD first check with the DFO or other senior FDA officials\". Answer: \"The Chair MUST verify with the DFO or senior FDA officials.\""
+    },
+    "fda-78268::gold::094": {
+      "verdict": "reject",
+      "reason": "source frames the whole list as advice: \"What special RECOMMENDATIONS apply ... The following RECOMMENDATIONS apply to amendments, updates, and supplements\", and the item itself is \"Begin each filename with the date (YYYY-MM-DD)\". Answer: \"must begin with the date\". Changed from keep to reject at the Phase 8 code-review gate. My original keep was wrong twice over: the recorded reason only checked content (the YYYY-MM-DD form) and never addressed obligation level, and it was inconsistent with ::097 in the same document, which I rejected for exactly this. The detector had steered me there -- `recommend`/`recommendations` were missing from the modal lexicon, so the frame scored 0 and routed to the lenient modal_added_to_unmodalised_source branch at medium severity instead of high."
+    },
+    "fda-78268::gold::097": {
+      "verdict": "reject",
+      "reason": "source: \"You SHOULD include a Table of Contents: - With any submission regarding a GRAS notice...\". Answer: \"A Table of Contents IS REQUIRED for any submission\". The question is leading in the same direction (must always include), so both halves assert an obligation the guidance does not."
+    },
+    "fda-88114::gold::103": {
+      "verdict": "keep",
+      "reason": "investigator duties under the exception-from-informed-consent regulation are requirements. The sentence-level check selected the clause about a subject dying before the representative was contacted rather than the obligation clause."
+    }
+  },
+  "amendments": [
+    {
+      "date": "2026-09-17",
+      "pair_id": "fda-78268::gold::094",
+      "from": "keep",
+      "to": "reject",
+      "why": "Phase 8 code-review gate disagreed with the keep and was right. Root cause was a lexicon gap: `recommend`, `recommends`, `recommendation`, `recommendations` were absent from MODAL_STRENGTH, so an FDA recommendation frame scored 0 and the check took its lenient branch. Same defect class as the missing bare `require` found during the original pass."
+    }
+  ]
+}

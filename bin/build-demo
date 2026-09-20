@@ -1,0 +1,527 @@
+#!/usr/bin/env bash
+#
+# build-demo — assemble the demo video from rendered frames, synthetic narration, and
+# subtitles generated from the same script.
+#
+# ## Why it renders rather than screen-records
+#
+# `screencapture -v` works and needs no extra tooling, and it is the wrong tool here for
+# two reasons. It captures the **whole desktop** — during a five-second test for this
+# project it caught personal chat titles and an employer name, which is unacceptable in an
+# artifact meant to be published. And a live take is at the mercy of this tier's generation
+# latency, measured at 2.2–27.1 s and observed as wide as 39.3 s: a third of takes would be
+# dead air.
+#
+# So the visuals are headless-Chrome renders of the real running service, which is
+# deterministic, leaks nothing, and re-runs in a minute.
+#
+# ## One source for narration and subtitles
+#
+# `SCENES` below holds the only copy of the spoken text. `say` turns it into audio and the
+# same string becomes the `.srt` cue, so the subtitles cannot drift from the voice — the
+# usual failure of hand-written captions. Subtitle timings come from the *measured*
+# duration of each audio file, not from an estimate.
+#
+# ## The voice is a placeholder
+#
+# macOS `say`. It is deliberately a stand-in: for a portfolio video, the narrator's own
+# voice is a signal about whether they can explain their work, and a synthetic one reads as
+# low effort. The intended workflow is to keep these visuals and timings and re-record the
+# audio. `--no-voice` renders a silent cut with subtitles only, which is the better base
+# for that.
+#
+# Usage:
+#   bin/build-demo                 # full build with synthetic narration
+#   bin/build-demo --no-voice      # silent, subtitles burned in
+#   bin/build-demo --keep          # leave the working directory for inspection
+
+set -euo pipefail
+
+ROOT="$(cd -P "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+OUT_DIR="$ROOT/docs"
+WORK="${TMPDIR:-/tmp}/agentrag-demo-build"
+CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+API="${AGENTRAG_API_URL:-http://127.0.0.1:8000}"
+VOICE="${DEMO_VOICE:-Daniel}"
+
+NO_VOICE=false
+KEEP=false
+for arg in "$@"; do
+  case "$arg" in
+    --no-voice) NO_VOICE=true ;;
+    --keep)     KEEP=true ;;
+    -h|--help)
+      sed -n '2,36p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+      exit 0
+      ;;
+    *) echo "unknown flag: $arg" >&2; echo "try: bin/build-demo --help" >&2; exit 2 ;;
+  esac
+done
+
+# `ffprobe` is checked because subtitle timing depends on it. It ships with ffmpeg, but a
+# minimal build can omit it, and its absence is silent: `say_secs` returns an empty string,
+# every cue gets a zero duration, and the result is a video whose subtitles all appear at
+# once. `python3` and `curl` are used for the probe and URL encoding.
+for tool in ffmpeg ffprobe say python3 curl; do
+  command -v "$tool" >/dev/null || { echo "missing: $tool" >&2; exit 1; }
+done
+[ -x "$CHROME" ] || { echo "Chrome not found at $CHROME" >&2; exit 1; }
+
+HEALTH="$(curl -fsS -m 5 "$API/health" 2>/dev/null || true)"
+[ -n "$HEALTH" ] || {
+  echo "The API is not answering at $API. Start it with: agentrag start" >&2
+  exit 1
+}
+
+# Generation must be *on*, not merely reachable. Checking only that /health responds is
+# the wrong check: a keyless service answers /health perfectly and then renders "No AI
+# answer available" on every query — so the build silently produced a video whose
+# narration described answering while every frame showed retrieval-only output. The
+# distinction between "the service is up" and "the service can do the thing the video
+# claims" is exactly the kind a passing check can hide.
+printf '%s' "$HEALTH" | python3 -c '
+import json, sys
+health = json.load(sys.stdin)
+if not health.get("generator_available"):
+    sys.exit(
+        "the service is running WITHOUT a generator, so every frame would show "
+        "retrieval-only output while the narration describes an answer.\n"
+        "  reason: " + str(health.get("generator_error") or "no key configured") + "\n"
+        "  fix:    export GEMINI_API_KEY=... && agentrag restart --no-build"
+    )
+if not health.get("ready"):
+    sys.exit("the index is not loaded; /health reports ready=false")
+' || exit 1
+
+rm -rf "$WORK"; mkdir -p "$WORK"
+cd "$WORK"
+
+# --- the script: one entry per scene ------------------------------------------------
+# Each scene is: frame-name | narration. The narration is both spoken and subtitled.
+#
+# Nothing here asserts a figure that is not visible in its own frame. An earlier draft
+# claimed the answered query "shows an unverified citation" — true of one run and not the
+# next, because the model is non-deterministic. Narration that describes what a specific
+# take produced has to be generated from that take, not written in advance.
+# The figures are **read, not typed**. Two of them were wrong when they were typed:
+#
+#   * "a hundred and sixty documents" was the number *fetched*. 152 have a usable text
+#     layer, and only those are in the index, so the spoken claim overstated what the
+#     system can answer over by eight documents.
+#   * "a factor of seventy five" is the `fixed` chunking's identifier margin. This service
+#     serves `structural`, whose margin is 43x. Quoting the best config's number while
+#     demonstrating a different one is the exact move the evaluation harness exists to
+#     prevent, and the narration was doing it.
+#
+# `narrate.py` takes the document and passage counts from the live `/health` and the
+# identifier margins from `reports/failure_modes.json`, keyed by the chunking the service
+# reports it is actually serving. If an artifact is missing it fails loudly rather than
+# falling back to a literal.
+cat > narrate.py <<'NARRATE_PY'
+import json
+import pathlib
+import sys
+
+health = json.loads(sys.argv[1])
+report = json.loads(pathlib.Path(sys.argv[2]).read_text())
+
+ONES = (
+    "zero one two three four five six seven eight nine ten eleven twelve thirteen "
+    "fourteen fifteen sixteen seventeen eighteen nineteen"
+).split()
+TENS = "  twenty thirty forty fifty sixty seventy eighty ninety".split(" ")
+
+
+def words(n: int) -> str:
+    """Spoken form. `say` reads digits acceptably but inconsistently across voices, and a
+    subtitle generated from the same string should read as prose."""
+    if n < 20:
+        return ONES[n]
+    if n < 100:
+        tens, rest = divmod(n, 10)
+        return TENS[tens] + (f" {ONES[rest]}" if rest else "")
+    hundreds, rest = divmod(n, 100)
+    head = f"{ONES[hundreds]} hundred" if hundreds > 1 else "a hundred"
+    return head + (f" and {words(rest)}" if rest else "")
+
+
+docs = health.get("docs")
+chunks = health.get("chunks")
+served = health.get("chunking")
+if not docs or not chunks or not served:
+    sys.exit("/health did not report docs, chunks and chunking; is the index loaded?")
+
+rows = {r["chunking"]: r for r in report["identifier_collapse"] if r.get("ratio")}
+if served not in rows:
+    sys.exit(
+        f"reports/failure_modes.json has no identifier margin for the chunking this "
+        f"service is serving ({served!r}); regenerate it with `agentrag failures`"
+    )
+served_ratio = round(rows[served]["ratio"])
+best_ratio = round(max(r["ratio"] for r in rows.values()))
+
+# Rounded *down* to the thousand, so "over thirteen thousand" is true of 13,423 and stays
+# true if re-chunking moves it. An exact spoken 13,423 is unlistenable.
+chunk_thousands = chunks // 1000
+
+margin = f"by a factor of {words(served_ratio)}"
+if best_ratio > served_ratio:
+    margin += (
+        f", and by as much as {words(best_ratio)} on a different way of splitting the "
+        f"same documents"
+    )
+
+SCENES = [
+    (
+        "01_empty",
+        f"This answers questions over {words(docs)} public F D A guidance documents and "
+        f"clinical trial protocols. What makes it different from a normal retrieval demo "
+        f"is the second half. Every quote the model produces is located in the source "
+        f"document before you see it.",
+    ),
+    (
+        "02_answer",
+        f"Here it is answering. Keyword search over {words(chunk_thousands)} thousand "
+        f"passages takes a fraction of a millisecond. The top five passages, and nothing "
+        f"else, go to the model, which is required to quote them. Then every quote is "
+        f"checked, and the badge reports how many were found.",
+    ),
+    (
+        "03_cite",
+        "This is the part worth looking at. On the left is what the model quoted. On the "
+        "right is what the document actually says. Both panes, always. Showing the source "
+        "only on a mismatch would make verified the one state where you cannot check the "
+        "work. You can also see the corpus fighting back: the extracted text splits words "
+        "mid-token.",
+    ),
+    (
+        "04_refusal",
+        "And a refusal is a feature. The model was told to answer only from the retrieved "
+        "text, and it reported that it could not. The alternative is a confident answer "
+        "with no support. Refusing correctly is measured here, not assumed.",
+    ),
+    (
+        "05_arch",
+        f"The architecture in three lanes. Build runs once. Serve retrieves, generates, "
+        f"and verifies, and the dashed arrow is the design decision: the verifier checks "
+        f"quotes against the retrieved passages, never against the model's own claim "
+        f"about where a quote came from. Evaluate was built first, and it decided the "
+        f"rest. On exact identifiers, dense retrieval loses to keyword search {margin}, "
+        f"so keyword search is what ships.",
+    ),
+]
+
+for name, text in SCENES:
+    print(f"{name}|{' '.join(text.split())}")
+NARRATE_PY
+
+SCENES=()
+while IFS= read -r line; do SCENES+=("$line"); done < <(
+  python3 narrate.py "$HEALTH" "$ROOT/reports/failure_modes.json"
+)
+[ "${#SCENES[@]}" -eq 5 ] || { echo "narration generation failed" >&2; exit 1; }
+
+say_secs () { ffprobe -v error -show_entries format=duration -of csv=p=0 "$1"; }
+
+shot () { # shot <out.png> <url> <budget-ms> [height]
+  local h="${4:-720}"
+  "$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars \
+    --force-device-scale-factor=2 --window-size="1280,$h" \
+    --screenshot="$1" --virtual-time-budget="$3" "$2" >/dev/null 2>&1
+}
+
+#: Tall enough to contain the whole page in one capture. Checked against the reported
+#: offset below rather than assumed, because the page grows with the answer.
+CITE_CANVAS=4000
+
+# The citations frame cannot use `shot`. Headless Chrome's `--screenshot` renders from the
+# document origin and ignores the scroll that the `#citations` deep link performs, so the
+# frame came out 87% empty with the verification panes just entering at the bottom edge --
+# under narration describing them. Confirmed over CDP rather than guessed: at capture time
+# the page reports `scrollY: 610` and `citeTopViewport: 0`, so the deep link is correct and
+# the screenshot is what ignores it. (`--headless=new` does honour the scroll, and never
+# exits under `--virtual-time-budget`, so it is not usable here.)
+#
+# So capture the whole page and crop to the offset the page publishes on
+# `body[data-cite-top]`. A screenshot tool cannot ask a layout engine where a card is, and
+# a hardcoded offset against a page whose height depends on the answer is the same guess
+# the deep link was added to remove. `--screenshot` and `--dump-dom` run in one invocation,
+# so the geometry and the pixels come from a single page load -- and therefore a single
+# generation request, which is the scarce resource at 20 per day.
+cite_shot () { # cite_shot <out.png> <url>
+  local dom top
+  dom="$("$CHROME" --headless --disable-gpu --no-sandbox --hide-scrollbars \
+    --force-device-scale-factor=2 --window-size="1280,$CITE_CANVAS" \
+    --screenshot="cite_full.png" --dump-dom --virtual-time-budget=60000 "$2" 2>/dev/null)"
+  top="$(printf '%s' "$dom" | sed -n 's/.*data-cite-top="\([0-9][0-9]*\)".*/\1/p' | head -1)"
+  [ -n "$top" ] || {
+    echo "the page did not report data-cite-top -- no citations rendered?" >&2; exit 1; }
+  [ "$((top + 720))" -le "$CITE_CANVAS" ] || {
+    echo "citations card at ${top}px needs a canvas taller than $CITE_CANVAS" >&2; exit 1; }
+  ffmpeg -v error -i cite_full.png -vf "crop=2560:1440:0:$((top * 2))" -y "$1"
+}
+
+enc () { # url-encode
+  python3 -c 'import sys,urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"
+}
+
+Q_ANSWER="How should a 904(a)(3) report be submitted to FDA?"
+Q_REFUSE="What is the boiling point of helium at 3 atmospheres?"
+
+# Spend one request to confirm generation actually works *before* rendering anything.
+#
+# `generator_available: true` only means a key is configured. The free tier is 20 requests
+# per day, and an exhausted quota produces a perfectly healthy service that refuses every
+# query — so the build rendered five frames of retrieval-only output under narration that
+# described answering, twice, before this check existed. A video whose voice and picture
+# disagree is worse than no video, and the failure is invisible unless you watch it.
+echo "[demo] checking generation before rendering (spends 1 of the day's 20 requests)"
+PROBE="$(curl -fsS -m 200 -X POST "$API/query" -H 'content-type: application/json' \
+  -d "$(python3 -c '
+import json, sys
+print(json.dumps({"query": sys.argv[1], "k": 5}))' "$Q_ANSWER")" 2>/dev/null || true)"
+
+cat > probe_check.py <<'PROBE_PY'
+import json
+import re
+import sys
+
+raw = sys.stdin.read()
+if not raw.strip():
+    sys.exit("the /query probe returned nothing; is the service still up?")
+
+d = json.loads(raw)
+reason = d.get("reason") or ""
+source = d.get("refusal_source") or ""
+
+# The daily cap is decided upstream off the 429's structured `quotaId` and arrives as
+# `refusal_source`. This used to be `re.search("quota", reason)`, which also matches a
+# *per-minute* 429 -- whose body reads "you exceeded your current quota" -- and so told
+# the operator to come back tomorrow over a limit that clears in seconds.
+if source == "daily_quota":
+    sys.exit(
+        "GENERATION QUOTA EXHAUSTED - stopping before rendering.\n"
+        "  The free tier allows 20 requests per day per model, and today is spent.\n"
+        "  Nothing is wrong with the build; it needs a fresh quota.\n"
+        "  Options: wait for the reset, or point the service at another model\n"
+        "           (quota is per model), then re-run bin/build-demo."
+    )
+
+if re.search(r"\b429\b|rate.?limit|quota", reason, re.I):
+    sys.exit(
+        "RATE LIMITED, not out of quota for the day - stopping before rendering.\n"
+        "  The provider refused for asking too quickly. Wait a minute and re-run.\n"
+        "  Reason: " + reason
+    )
+
+if not d.get("answered"):
+    # `refusal_source` distinguishes causes that need different responses. Printing only
+    # the prose treated "retrieval found nothing" the same as "the model declined", and
+    # only one of those is fixed by re-running.
+    advice = {
+        "no_context": (
+            "retrieval returned no usable context for the probe query, so re-running will\n"
+            "  not help. Check that the index is the one you think it is: `agentrag status`."
+        ),
+        "score_gate": (
+            "the score gate refused before calling the model, so no quota was spent.\n"
+            "  The probe query is below the refusal threshold for this index."
+        ),
+        "generation_error": (
+            "the model call failed. Re-running often succeeds; if it does not, the reason\n"
+            "  above is the upstream's."
+        ),
+    }.get(
+        source,
+        "the model is non-deterministic here; re-running often succeeds.",
+    )
+    sys.exit(
+        "the probe query did not produce an answer, so the answer and citation frames\n"
+        "  would not match their narration.\n"
+        "  Reason: " + (reason or "model refused") + "\n"
+        "  Source: " + (source or "unreported") + "\n"
+        "  " + advice
+    )
+
+if not (d.get("citations") or []):
+    sys.exit("the probe answered but cited nothing, so the citation frame would be empty")
+
+v = d["verification"]
+# Scene 3 narrates the verification panes as the thing worth looking at. If nothing was
+# located, that frame shows five red borders under narration describing a working check --
+# a technically honest screen paired with misleading audio, which is the same class of
+# mismatch the quota guard above exists to prevent.
+if not v.get("verified"):
+    sys.exit(
+        "the probe answered and cited, but NOT ONE quote could be located in its source\n"
+        f"  ({v.get('verified')}/{v.get('claimed')} located). The citation frame would be\n"
+        "  entirely unverified while the narration describes the check working.\n"
+        "  Re-run: this is usually one bad draw, not a broken verifier. If it repeats,\n"
+        "  the verifier or the chunk text is the bug and the video should wait."
+    )
+
+print(
+    f"[demo] generation OK - {len(d['citations'])} citations, "
+    f"{v['verified']}/{v['claimed']} located"
+)
+PROBE_PY
+
+printf '%s' "$PROBE" | python3 probe_check.py || exit 1
+
+echo "[demo] rendering frames from the live service"
+
+shot 01_empty.png "$API/" 4000
+# Generation is a network call; the budget has to cover the slowest plausible draw. Two
+# captures of the same query: the answer at the top of the page, and the citation panes
+# via the `#citations` deep link.
+#
+# The link is why this is reliable. The first version captured one tall page and cropped a
+# fixed pixel offset for the citations — which worked once and then silently framed the
+# per-stage table instead, because the page grew when the model returned five citations
+# rather than two. A hardcoded offset against a variable-height page is not a crop, it is
+# a guess.
+shot 02_answer.png "$API/?q=$(enc "$Q_ANSWER")&k=5" 60000
+cite_shot 03_cite.png "$API/?q=$(enc "$Q_ANSWER")&k=5#citations" 60000
+shot 04_refusal.png "$API/?q=$(enc "$Q_REFUSE")&k=5" 60000
+shot 05_arch.png "file://$ROOT/docs/architecture.svg" 4000
+
+#: Height reserved at the bottom of every frame for the burned-in captions. Subtitles used
+#: to be drawn straight over the picture, which put them across the EVALUATE lane of the
+#: architecture diagram -- covering `192 configurations`, `the finding` and the 43-75x
+#: result, the single most important number in the video. A band costs ~13% of the picture
+#: and buys the guarantee that nothing is ever obscured. 96px holds two lines at the size
+#: set below with room to spare.
+SUBTITLE_BAND=96
+CONTENT_H=$((720 - SUBTITLE_BAND))
+
+for f in 01_empty 02_answer 03_cite 04_refusal 05_arch; do
+  # Top-aligned rather than centred: the band is not padding to be shared, it is reserved.
+  ffmpeg -v error -i "$f.png" -vf "scale=1280:$CONTENT_H:force_original_aspect_ratio=decrease,\
+pad=1280:720:(ow-iw)/2:0:color=#0f1117" -y "frame_$f.png"
+done
+
+echo "[demo] narration + subtitle cues"
+: > concat.txt
+: > demo.srt
+cue=1
+t=0
+for scene in "${SCENES[@]}"; do
+  name="${scene%%|*}"
+  text="${scene#*|}"
+
+  if $NO_VOICE; then
+    # Reading pace, so a silent cut still holds each frame long enough to read.
+    words=$(printf '%s' "$text" | wc -w | tr -d ' ')
+    dur=$(python3 -c "print(max(4.0, $words / 2.6))")
+  else
+    say -v "$VOICE" -o "audio_$name.aiff" "$text"
+    dur=$(say_secs "audio_$name.aiff")
+    # A beat at each cut, so narration does not start on the frame change.
+    dur=$(python3 -c "print(round($dur + 0.7, 3))")
+  fi
+
+  printf "file 'frame_%s.png'\nduration %s\n" "$name" "$dur" >> concat.txt
+
+  python3 - "$cue" "$t" "$dur" "$text" >> demo.srt <<'PY'
+import sys
+cue, start, dur, text = int(sys.argv[1]), float(sys.argv[2]), float(sys.argv[3]), sys.argv[4]
+
+def stamp(seconds):
+    ms = int(round(seconds * 1000))
+    h, ms = divmod(ms, 3_600_000)
+    m, ms = divmod(ms, 60_000)
+    s, ms = divmod(ms, 1000)
+    return f"{h:02d}:{m:02d}:{s:02d},{ms:03d}"
+
+# Wrapped to two lines of readable width rather than one long run.
+words, lines, line = text.split(), [], ""
+for word in words:
+    if len(line) + len(word) + 1 > 42:
+        lines.append(line)
+        line = word
+    else:
+        line = f"{line} {word}".strip()
+lines.append(line)
+# Subtitles are split into at most two on-screen lines per cue, in sequence.
+chunk = 2
+groups = [lines[i : i + chunk] for i in range(0, len(lines), chunk)]
+span = dur / len(groups)
+for i, group in enumerate(groups):
+    print(cue + i)
+    print(f"{stamp(start + i * span)} --> {stamp(start + (i + 1) * span)}")
+    print("\n".join(group))
+    print()
+PY
+  # Advance the cue counter by however many cues that scene emitted.
+  cue=$(python3 -c "
+import math,sys
+words='''$text'''.split()
+lines,line=[],''
+for w in words:
+    if len(line)+len(w)+1>42: lines.append(line); line=w
+    else: line=(line+' '+w).strip()
+lines.append(line)
+print($cue + math.ceil(len(lines)/2))")
+  t=$(python3 -c "print(round($t + $dur, 3))")
+done
+# concat demuxer needs the final frame repeated to honour its duration
+printf "file 'frame_05_arch.png'\n" >> concat.txt
+
+echo "[demo] assembling"
+# `-fps_mode cfr` rather than `-vsync vfr` plus `-r`: ffmpeg 8 rejects the pair as
+# contradictory, and a constant frame rate is what a still-image slideshow wants anyway.
+ffmpeg -v error -f concat -safe 0 -i concat.txt -fps_mode cfr -r 30 -pix_fmt yuv420p \
+  -c:v libx264 -crf 20 -y silent.mp4
+
+if $NO_VOICE; then
+  cp silent.mp4 video.mp4
+else
+  : > audio_list.txt
+  for scene in "${SCENES[@]}"; do
+    name="${scene%%|*}"
+    # Pad each clip with the same beat the frame duration allows.
+    ffmpeg -v error -i "audio_$name.aiff" -af "apad=pad_dur=0.7" -y "pad_$name.wav"
+    echo "file 'pad_$name.wav'" >> audio_list.txt
+  done
+  ffmpeg -v error -f concat -safe 0 -i audio_list.txt -y narration.wav
+  ffmpeg -v error -i silent.mp4 -i narration.wav -c:v copy -c:a aac -b:a 128k \
+    -shortest -y video.mp4
+fi
+
+# Burn the subtitles in, so the file is self-contained, and keep the .srt alongside for
+# anyone who wants to re-time or translate it.
+# ffmpeg renders an SRT through a 384x288 ASS canvas, so every style number here is scaled
+# by 2.5 on the way to 720p unless the canvas is pinned. That is not a rounding detail: it
+# is why `MarginV=42` placed the captions 105 real pixels up, over the picture, rather than
+# in the margin it names. Pin the script resolution to the video's and the numbers below
+# are pixels, which is the only way to aim them at a band measured in pixels.
+ffmpeg -v error -i demo.srt -y demo.ass
+python3 - <<'ASS_PIN'
+import re
+
+path = "demo.ass"
+text = open(path).read()
+text, nx = re.subn(r"(?m)^PlayResX:.*$", "PlayResX: 1280", text)
+text, ny = re.subn(r"(?m)^PlayResY:.*$", "PlayResY: 720", text)
+if not (nx and ny):
+    # Refused rather than defaulted: without a known canvas the style units below are an
+    # unknown multiple of a pixel, and the failure mode is captions over the content.
+    raise SystemExit("demo.ass carries no PlayRes header to pin -- refusing to guess")
+open(path, "w").write(text)
+ASS_PIN
+ffmpeg -v error -i video.mp4 -vf "subtitles=demo.ass:force_style=\
+'FontName=Helvetica,FontSize=26,PrimaryColour=&H00E6E8EE,OutlineColour=&H90000000,\
+BorderStyle=3,Outline=2,Shadow=0,Alignment=2,MarginV=14'" -c:a copy -y demo_subbed.mp4
+
+mkdir -p "$OUT_DIR"
+cp demo_subbed.mp4 "$OUT_DIR/demo.mp4"
+cp demo.srt "$OUT_DIR/demo.srt"
+
+dur=$(ffprobe -v error -show_entries format=duration -of csv=p=0 "$OUT_DIR/demo.mp4")
+size=$(du -h "$OUT_DIR/demo.mp4" | cut -f1 | tr -d ' ')
+echo "[demo] docs/demo.mp4  ${dur%.*}s  $size"
+echo "[demo] docs/demo.srt  $(grep -c ' --> ' "$OUT_DIR/demo.srt") cues"
+$NO_VOICE && echo "[demo] silent cut — subtitles only"
+
+$KEEP && echo "[demo] working files kept in $WORK" || rm -rf "$WORK"
+exit 0
