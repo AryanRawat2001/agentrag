@@ -6,6 +6,62 @@ than one with no mistakes in it.
 
 ---
 
+## The chunk-size sweep, regenerated — the stale corpus was hiding a stronger conclusion
+
+2026-09-20, after the repo went public. `reports/chunk_size_sweep.md` was the one artifact
+still carrying the **pre-quarantine corpus** (13,706 chunks over 154 documents against the
+current 13,423 over 152). Phase 8d had left it deliberately: it is a dated snapshot of a
+run, so hand-editing its table would forge a measurement, and regenerating is a ~25-minute
+`make sweep`. That was defensible while the repo was private. Once it was public, a reader
+cross-checking 13,706 against the 13,423 in every other artifact just finds a contradiction.
+
+Regenerating took three attempts, and the first two diagnoses were wrong:
+
+1. `PermissionError ... downloading BAAI/bge-small-en-v1.5. Check cache directory
+   permissions.` I read this as the sandbox blocking the HF cache. It was not: the model
+   was already cached and the directory was writable.
+2. So I forced `HF_HUB_OFFLINE=1`, which also failed — and the traceback named
+   `httpx/_config.py create_ssl_context`. That is the documented certifi signature: `*.pem`
+   is on the sandbox read-deny list, so the SSL context cannot be built **at import**,
+   before any download decision is reached. Offline mode could never have helped.
+
+The lesson is the ordering: an error that *names* a cache is not evidence about a cache.
+Both wrong turns came from reading the message instead of the traceback's bottom frame.
+
+### What the regeneration changed
+
+The corpus-shape table moved as expected (13,706 → 13,423 at 1,024). Two things did not:
+
+* **`title_lookup`'s primary metric came back as `hit@1`, not `hit@10`.** That is not the
+  corpus — it is deviation #18 from Phase 8a, which the old snapshot predated. So the
+  report had been carrying a metric the rest of the repo had already retired.
+* **The README's chunk-size table was built on the old run**, and five of its figures were
+  wrong. Corrected against the new JSON rather than edited by hand:
+
+| claim | was | now |
+|---|---|---|
+| section `hit@10` across sizes | "flat at 0.966 from 1,024 onward" | **declines**, 0.967 → 0.917 |
+| section `precision@10` | 0.236 → 0.109 | 0.248 → 0.100 |
+| section `recall@10` | 0.809 → 0.932 | 0.753 → 0.900 |
+| truncation at 1,024 | 0.6% | **0.03%** |
+| 1,024 vs 2,048, denominator-free | 2,048 wins 22 to 11 | **2,048 wins 26 to 4** |
+
+**Every conclusion survived, and two got stronger.** The argument for 1,024 was always
+truncation plus refusal separability, and truncation at 1,024 is now essentially zero
+(0.03% against 2,048's 9.81%). The argument that `recall@10` rises only because its
+denominator shrinks is now *demonstrated* rather than inferred: the denominator-free
+`hit@10` actively declines with chunk size instead of staying flat.
+
+One new trap, and it is the same one this section already warns about one size down. The
+five-figure table now favours **512** on four of five. Across the full denominator-free set
+512 and 1,024 are a coin flip — 20 wins to 21, 19 ties — and 512 costs 63% more chunks to
+index. Reading five favourable cells as a finding is exactly the cherry-picking the
+numerical audit caught the first time, so the README now says so explicitly.
+
+Suite: **1116 passed, 2 skipped**, unchanged.
+
+---
+
 ## The demo video, first real build — two defects the frames showed and the tests did not
 
 2026-09-20. Quota refreshed, so `bin/build-demo` ran end to end for the first time:

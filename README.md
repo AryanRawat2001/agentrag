@@ -227,30 +227,36 @@ Phase 1b picked a 2,048-character chunk target from an estimate and never revisi
 Sweeping 512 / 1,024 / 2,048 / 4,096 at fixed overlap says it was too big — but only if
 you read the right metric.
 
-`recall@10` on section lookup rises cleanly with chunk size (0.809 → 0.932). That reads
+`recall@10` on section lookup rises cleanly with chunk size (0.753 → 0.900). That reads
 as "bigger is better" and it is an artifact: larger chunks mean **fewer chunks per
 section**, so recall's denominator shrinks. `hit@10` — did we find the section at all —
-is **flat at 0.966** from 1,024 onward, and `precision@10` falls from 0.236 to 0.109.
+actually *declines* (0.967 → 0.917) while `precision@10` falls from 0.248 to 0.100. The
+denominator-free metric gets worse as chunks get bigger; only the one with a shrinking
+denominator improves.
 
 | target | identifier `hit@1` | identifier `hit@10` | section `hit@10` | refusal separability | **% chunks truncated** |
 |---|---|---|---|---|---|
-| 512 | **0.900** | 0.967 | 0.948 | **0.992** | **0.0%** |
-| **1,024** | 0.850 | **0.983** | **0.966** | 0.983 | 0.6% |
-| 2,048 *(old default)* | 0.833 | **0.983** | **0.966** | 0.942 | 10.4% |
-| 4,096 | 0.700 | 0.967 | **0.966** | 0.908 | 31.1% |
+| 512 | **0.900** | 0.967 | **0.967** | **0.992** | **0.0%** |
+| **1,024** | 0.833 | **0.983** | 0.933 | 0.983 | **0.03%** |
+| 2,048 *(old default)* | 0.833 | **0.983** | 0.933 | 0.942 | 9.8% |
+| 4,096 | 0.700 | 0.967 | 0.917 | 0.908 | 31.0% |
 
 **It is a trade, not a domination — and my first version of this section got that
-wrong.** The five figures above genuinely favour 1,024, but across *all*
-denominator-free metrics (`hit@1/5/10/20`, `mrr@10`) over three answerable slices and
-four retrievers, **2,048 wins 22 comparisons to 1,024's 11**, with 27 ties. `mrr@10` —
-which the metrics module itself calls "what a user actually sees" — prefers 2,048 on 8
-of 12 slice×retriever pairs, and section `hit@1` is 0.672 at 1,024 against 0.724 at
-2,048. Generalising from five favourable metrics to "every undistorted measure" was
+wrong.** Five figures are not a finding. Across *all* denominator-free metrics
+(`hit@1/5/10/20`, `mrr@10`) over three answerable slices and four retrievers,
+**2,048 wins 26 comparisons to 1,024's 4**, with 30 ties. `mrr@10` — which the metrics
+module itself calls "what a user actually sees" — prefers 2,048 on 9 of 12
+slice×retriever pairs, and section `hit@1` is 0.617 at 1,024 against 0.667 at 2,048.
+Generalising from five favourable metrics to "every undistorted measure" was
 cherry-picking, caught by the phase's numerical audit against the sweep's own JSON.
+
+The table above now favours **512** on four of those five, which is the same trap one
+size down: over the full denominator-free set 512 and 1,024 are a coin flip — **20 wins
+to 21, with 19 ties** — and 512 costs 63% more chunks to index for it.
 
 1,024 still ships, on two narrow grounds:
 
-- **Truncation, 10.4% → 0.6%.** At 2,048 a tenth of chunks lose text before a vector
+- **Truncation, 9.8% → 0.03%.** At 2,048 a tenth of chunks lose text before a vector
   exists. That is a correctness defect, not a ranking preference.
 - **Refusal separability, +0.042**, which Phase 5's refusal path depends on.
 
@@ -277,7 +283,7 @@ Two mechanisms are worth naming:
 | **Prepending section headings** | **+0.333 recall@10** (0.828 vs 0.495) | section lookup |
 | **Identifier-aware tokenization** | **+0.402 recall@10** (0.955 vs 0.553) | exact identifier |
 | **Section-aligned chunk boundaries** | **+0.255 recall@10** (0.828 vs 0.573) | section lookup |
-| **Halving the chunk target** to 1,024 | **10.4% → 0.6%** of chunks truncated before embedding | all |
+| **Halving the chunk target** to 1,024 | **9.8% → 0.03%** of chunks truncated before embedding | all |
 
 The first and third effects shrank when the golden set was regenerated against the
 post-quarantine corpus (+0.467 → +0.333 and +0.346 → +0.255); identifier tokenization
@@ -300,18 +306,18 @@ Truncation has **two independent causes**, and the sweep above and this row are 
 different ones — worth separating, because they point at different fixes:
 
 - **Across chunk sizes**, the truncation *rate* is set by the target: 0.0% at 512 chars
-  rising to 31.1% at 4,096. That is the sweep's finding, and the fix is choosing a
+  rising to 31.0% at 4,096. That is the sweep's finding, and the fix is choosing a
   smaller target.
 - **Within a fixed size**, which particular chunks get clipped is set by *tokenization
   density*, not by chunks running over target. At the old 2,048 default no chunk
-  exceeded 2,464 characters, yet 10.4% still truncated — because regulatory text runs
+  exceeded 2,464 characters, yet 9.8% still truncated — because regulatory text runs
   4.54 chars/token at the median but **1.16 at the floor**, and the floor is
   table-of-contents dot leaders, where `....................` costs about one token per
   character. One chunk spent 1,819 tokens on 2,108 characters of navigation and evicted
   everything after it. The fix there is normalization, which is what the row measures.
 
 Both are needed: collapsing dot leaders reclaimed 11.2% of tokens at a fixed size, and
-halving the target cut the truncation rate from 10.4% to 0.6%.
+halving the target cut the truncation rate from 9.8% to 0.03%.
 
 ## Why the evaluation comes first
 
