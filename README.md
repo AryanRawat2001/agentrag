@@ -10,7 +10,7 @@ strategies were all built and measured. **The measurement is why the shipped ser
 BM25 alone** — see the headline result below. That is the argument of this repo: the
 evaluation harness was built first, and it decided the design.
 
-https://github.com/user-attachments/assets/0a1582f0-6913-4fdd-aa1c-0948eca780b4
+https://github.com/user-attachments/assets/6814dd3e-878b-4d6f-b290-512c451f781b
 
 <sub>**38 seconds.** A designed recreation of real results — every verdict in it is output
 from this repo's own verifier, and the refusal is a real logged outcome from
