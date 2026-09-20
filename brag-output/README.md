@@ -6,9 +6,9 @@ by Hyperframes.
 
 | File | What it is |
 |---|---|
-| `brag.mp4` | 1920x1080, 38.0s, H.264 + AAC. Poster baked as frame 0. |
-| `brag-preview.gif` | 7s loop of the citation-card reveal, cropped to the cards. **This is what the repo README embeds** — GitHub strips `<video>` for repo-hosted files (verified against its markdown API), so a GIF is the only thing that plays inline. |
-| `brag.jpg` | Poster still — the two-card frame at 14.5s. Baked as frame 0 of the mp4, and the custom-thumbnail upload for platforms that accept one. |
+| `agentrag.mp4` | 1920x1080, 38.0s, H.264 + AAC. Poster baked as frame 0. |
+| `agentrag-preview.gif` | 7s loop of the citation-card reveal, cropped to the cards. **This is what the repo README embeds** — GitHub strips `<video>` for repo-hosted files (verified against its markdown API), so a GIF is the only thing that plays inline. |
+| `agentrag.jpg` | Poster still — the two-card frame at 14.5s. Baked as frame 0 of the mp4, and the custom-thumbnail upload for platforms that accept one. |
 | `share-copy.txt` | The caption. |
 | `brag-plan.md` | Creative plan and storyboard. |
 | `composition-brief.md` | The brief handed to Hyperframes, including the provenance of every figure and quote on screen. |

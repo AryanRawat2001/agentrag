@@ -16,8 +16,8 @@ https://github.com/user-attachments/assets/0a1582f0-6913-4fdd-aa1c-0948eca780b4
 from this repo's own verifier, and the refusal is a real logged outcome from
 `reports/generation_eval.json`. The full technical walkthrough is `bin/build-demo`, which
 renders from the live service. Also available as
-[`brag-output/brag.mp4`](brag-output/brag.mp4) and as a
-[looping preview](brag-output/brag-preview.gif).</sub>
+[`brag-output/agentrag.mp4`](brag-output/agentrag.mp4) and as a
+[looping preview](brag-output/agentrag-preview.gif).</sub>
 
 > **Status: Phases 0–8 of 9 shipped**, each behind two independent verification gates — a
 > code review, and a numerical audit that recomputes every published figure from raw data

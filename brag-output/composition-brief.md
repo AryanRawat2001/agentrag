@@ -6,7 +6,7 @@ every quote a model produces in the source document before the reader sees it.
 
 ## Output
 - Composition directory: `brag-output/composition/`
-- Rendered video: `brag-output/brag.mp4`
+- Rendered video: `brag-output/agentrag.mp4`
 - Format: landscape — 1920x1080
 - Duration: 38.0 seconds
 
@@ -130,7 +130,7 @@ Type is sized for a phone feed, not for the authoring screen. The first pass use
 pane labels and 22px quote text, which is about **7px** once LinkedIn renders 1080p into a
 ~420px mobile column — verified by downscaling a frame to 420px and looking at it, not by
 assuming. Nothing a viewer must read is now below ~22px, and the lines they must read are
-31px and up. Re-run that check after any copy change: `ffmpeg -i brag.jpg -vf scale=420:-1`.
+31px and up. Re-run that check after any copy change: `ffmpeg -i agentrag.jpg -vf scale=420:-1`.
 
 ## Figure discipline (hard constraint, not a preference)
 Every number on screen exists in a committed artifact of this repo.
