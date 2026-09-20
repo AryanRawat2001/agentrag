@@ -87,7 +87,7 @@ make chunk && make serve    # uvicorn on :8000; Qdrant is measured, not required
 ### Reproduce the results rather than trust them
 
 ```bash
-make test                   # 1,116 tests
+make test                   # 1,118 tests
 make eval                   # the retrieval ablation -> reports/retrieval_eval.md
 make bench                  # per-stage serving latency, spends no quota
 make failures               # the five named failure modes
